@@ -1,0 +1,1927 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MetalPro S.A. · Plataforma de Inducción SSOMA</title>
+<!-- EmailJS: permite enviar correos desde esta misma página (sin servidor propio) -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #E8E9EB;
+  --card: #FFFFFF;
+  --ink: #1F2A33;
+  --mut: #5D6B77;
+  --line: #CBD0D5;
+  --steel: #2F4B63;
+  --steel-dark: #1A2836;
+  --yel: #F2B705;
+  --yel-hover: #D9A304;
+  --red: #B93A2B;
+  --grn: #2E7D4F;
+  --redbg: #F8E3E0;
+  --grnbg: #E0F0E6;
+  --yelbg: #FFF3CC;
+  --bluebg: #E3F2FD;
+  --blue: #1976D2;
+  box-sizing: border-box;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #151C24;
+    --card: #222B35;
+    --ink: #E8ECEF;
+    --mut: #9AA8B3;
+    --line: #374452;
+    --steel: #6393BC;
+    --steel-dark: #0F161E;
+    --redbg: #4A2622;
+    --grnbg: #1A3A29;
+    --yelbg: #4A3D10;
+    --bluebg: #162E45;
+    --blue: #64B5F6;
+    --red: #F07C6C;
+    --grn: #6FCB92;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #151C24;
+  --card: #222B35;
+  --ink: #E8ECEF;
+  --mut: #9AA8B3;
+  --line: #374452;
+  --steel: #6393BC;
+  --steel-dark: #0F161E;
+  --redbg: #4A2622;
+  --grnbg: #1A3A29;
+  --yelbg: #4A3D10;
+  --bluebg: #162E45;
+  --blue: #64B5F6;
+  --red: #F07C6C;
+  --grn: #6FCB92;
+}
+
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 'Barlow', system-ui, sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+h1, h2, h3, h4 { font-family: 'Barlow Condensed', Impact, sans-serif; margin: 0; letter-spacing: 0.02em; }
+
+/* ANIMACIONES */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+.shake { animation: shake 0.4s ease-in-out; }
+
+/* 1. PANTALLA DE LOGIN */
+#loginView {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: linear-gradient(135deg, var(--steel-dark) 0%, #090D12 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+#loginView::before {
+  content: '';
+  position: absolute;
+  top: -100px; right: -100px;
+  width: 350px; height: 350px;
+  background: var(--yel);
+  opacity: 0.08;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.login-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-top: 6px solid var(--yel);
+  border-radius: 10px;
+  width: 100%;
+  max-width: 460px;
+  padding: 32px 28px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  position: relative;
+  z-index: 2;
+}
+
+.brand-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--steel-dark);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--yel);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.brand-logo span { color: var(--yel); }
+.brand-header h2 { font-size: 26px; color: var(--ink); margin: 6px 0 2px; }
+.brand-header p { font-size: 14px; color: var(--mut); margin: 0; }
+
+.form-group {
+  margin-bottom: 18px;
+}
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--mut);
+  margin-bottom: 6px;
+  letter-spacing: 0.04em;
+}
+.input-wrapper {
+  position: relative;
+}
+.input-wrapper input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 15px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--ink);
+  transition: border-color 0.2s;
+}
+.input-wrapper input:focus {
+  outline: none;
+  border-color: var(--yel);
+  box-shadow: 0 0 0 3px rgba(242, 183, 5, 0.2);
+}
+.toggle-pwd {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--mut);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 17px;
+  font-weight: 700;
+  background: var(--yel);
+  color: #1F2A33;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.login-btn:hover { background: var(--yel-hover); }
+.login-btn:active { transform: scale(0.99); }
+
+.error-msg {
+  background: var(--redbg);
+  color: var(--red);
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: none;
+  border-left: 4px solid var(--red);
+}
+
+.demo-box {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px dashed var(--line);
+}
+.demo-box p { font-size: 12px; font-weight: 700; color: var(--mut); text-transform: uppercase; margin-bottom: 10px; text-align: center; }
+.demo-btn-group { display: flex; flex-direction: column; gap: 8px; }
+.demo-btn {
+  background: rgba(0,0,0,0.04);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.2s;
+}
+.demo-btn:hover { background: rgba(242, 183, 5, 0.15); border-color: var(--yel); }
+.demo-btn small { color: var(--mut); font-size: 11px; }
+
+/* 2. ESTRUCTURA PRINCIPAL DE LA PLATAFORMA */
+#appView {
+  display: none;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header {
+  background: var(--steel-dark);
+  color: #fff;
+  border-bottom: 5px solid var(--yel);
+  padding: 14px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 24px;
+  align-items: center;
+  justify-content: space-between;
+}
+header h1 { font-size: 24px; line-height: 1.1; margin: 0; }
+header small { opacity: 0.85; display: block; font-size: 13px; font-family: 'Barlow', sans-serif; }
+
+.header-right {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.user-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.08);
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.avatar {
+  width: 36px; height: 36px;
+  background: var(--yel);
+  color: #1F2A33;
+  font-weight: 700;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 18px;
+}
+.user-info { line-height: 1.2; }
+.user-info strong { display: block; font-size: 14px; }
+.user-info small { color: rgba(255,255,255,0.7); font-size: 12px; }
+
+.role-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-block;
+  margin-top: 2px;
+}
+.role-badge.admin { background: var(--yel); color: #1F2A33; }
+.role-badge.colaborador { background: var(--grn); color: #fff; }
+.role-badge.supervisor { background: #1976D2; color: #fff; }
+
+/* REGISTRO */
+.switch-auth { text-align: center; margin-top: 16px; font-size: 14px; color: var(--mut); }
+.switch-auth a { color: var(--steel); font-weight: 700; cursor: pointer; text-decoration: underline; }
+.form-select { width: 100%; padding: 12px 14px; font-size: 15px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); font-family: inherit; }
+.form-select:focus { outline: none; border-color: var(--yel); box-shadow: 0 0 0 3px rgba(242, 183, 5, 0.2); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
+.hint { font-size: 12px; color: var(--mut); margin-top: 5px; }
+
+.day-badge-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0,0,0,0.2);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+.day-badge-container b { color: var(--yel); font-size: 18px; font-family: 'Barlow Condensed', sans-serif; }
+
+/* BANNER DE ROL ACTIVO */
+.role-banner {
+  background: var(--steel);
+  color: #fff;
+  padding: 8px 20px;
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+}
+.role-banner.admin { background: #183144; border-left: 6px solid var(--yel); }
+.role-banner.colaborador { background: #1C3C28; border-left: 6px solid var(--grn); }
+.role-banner.supervisor { background: #14304A; border-left: 6px solid #1976D2; }
+
+/* NAVEGACIÓN Y TABS */
+nav {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding: 12px 20px 0;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  scrollbar-width: thin;
+}
+nav button {
+  font: 600 15px 'Barlow', sans-serif;
+  padding: 10px 16px;
+  border: 1px solid var(--line);
+  border-bottom: 0;
+  background: rgba(0,0,0,0.03);
+  color: var(--mut);
+  border-radius: 6px 6px 0 0;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+nav button:hover { background: var(--card); color: var(--ink); }
+nav button[aria-selected=true] {
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: inset 0 3px 0 var(--yel);
+  border-color: var(--line);
+}
+
+main {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 20px 40px;
+  flex: 1;
+}
+
+.panel {
+  background: var(--card);
+  border: 1px solid var(--line);
+  padding: 24px;
+  border-radius: 0 6px 6px 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  min-height: 400px;
+}
+
+/* UTILERÍAS & COMPONENTES */
+.st { display: inline-block; padding: 3px 10px; font-weight: 600; border-radius: 4px; font-size: 13px; text-align: center; }
+.ok { background: var(--grnbg); color: var(--grn); }
+.bad { background: var(--redbg); color: var(--red); }
+.wait { background: var(--yelbg); color: var(--ink); }
+.info { background: var(--bluebg); color: var(--blue); }
+
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 24px; }
+.kpi { border: 1px solid var(--line); border-left: 6px solid var(--line); padding: 14px; border-radius: 6px; background: var(--card); }
+.kpi.ok { border-left-color: var(--grn); }
+.kpi.bad { border-left-color: var(--red); }
+.kpi.wait { border-left-color: var(--yel); }
+.kpi.info { border-left-color: var(--blue); }
+.kpi b { font: 700 32px/1.1 'Barlow Condensed', sans-serif; display: block; margin-top: 4px; }
+.kpi small { color: var(--mut); font-size: 13px; font-weight: 500; }
+
+.bar { height: 8px; background: var(--line); border-radius: 4px; margin-top: 8px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--steel); transition: width 0.3s ease; }
+.bar.grn i { background: var(--grn); }
+
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+h2 { font-size: 24px; margin: 0 0 14px; color: var(--steel); border-bottom: 2px solid var(--yel); display: inline-block; padding-bottom: 2px; }
+h3 { font-size: 20px; margin: 18px 0 8px; }
+
+.alert { padding: 12px 14px; border-left: 5px solid var(--red); background: var(--redbg); margin-bottom: 12px; border-radius: 4px; }
+.alert.y { border-color: var(--yel); background: var(--yelbg); }
+.alert.g { border-color: var(--grn); background: var(--grnbg); }
+.alert.b { border-color: var(--blue); background: var(--bluebg); }
+.alert small { display: block; color: var(--mut); margin-top: 4px; font-size: 13px; }
+
+.tw { overflow-x: auto; margin-top: 10px; border-radius: 6px; border: 1px solid var(--line); }
+table { border-collapse: collapse; width: 100%; min-width: 680px; font-size: 14px; background: var(--card); }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+th { font-size: 13px; color: var(--mut); font-weight: 700; text-transform: uppercase; background: rgba(0,0,0,0.03); }
+tr:last-child td { border-bottom: 0; }
+tr:hover { background: rgba(0,0,0,0.015); }
+
+input[type=text], input[type=number], select, textarea {
+  font: inherit;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--ink);
+}
+textarea { width: 100%; min-height: 80px; resize: vertical; }
+
+.btn {
+  font: 600 15px 'Barlow', sans-serif;
+  background: var(--yel);
+  color: #1F2A33;
+  border: 0;
+  padding: 9px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: opacity 0.2s;
+}
+.btn:hover { opacity: 0.9; }
+.btn-steel { background: var(--steel); color: #fff; }
+.btn-grn { background: var(--grn); color: #fff; }
+.btn-red { background: var(--red); color: #fff; }
+.btn-outline { background: transparent; border: 1px solid var(--line); color: var(--ink); }
+.btn-sm { padding: 5px 10px; font-size: 13px; }
+
+.crit { border: 1px solid var(--line); padding: 12px 14px; margin-bottom: 10px; border-radius: 4px; display: flex; gap: 12px; align-items: center; background: var(--card); }
+.crit input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--steel); flex: none; cursor: pointer; }
+
+.video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 6px; margin-bottom: 16px; border: 1px solid var(--line); background: #000; }
+.video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+
+/* MODAL SYSTEM */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+}
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
+.modal {
+  background: var(--card);
+  padding: 24px;
+  border-radius: 8px;
+  max-width: 550px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+/* TOAST NOTIFICATION */
+#toast {
+  position: fixed; bottom: 20px; right: 20px;
+  background: var(--steel-dark); color: #fff;
+  padding: 12px 20px; border-radius: 6px;
+  border-left: 6px solid var(--yel);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  z-index: 2000; display: flex; align-items: center; gap: 10px;
+  transform: translateY(100px); opacity: 0; transition: all 0.3s ease;
+}
+#toast.show { transform: translateY(0); opacity: 1; }
+
+.btn-logout {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.btn-logout:hover { background: var(--red); border-color: var(--red); }
+
+.theme-toggle { background: transparent; border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 13px; }
+
+@media print {
+  header, nav, .noprint, .role-banner, #loginView { display: none !important; }
+  body { background: #fff; color: #000; }
+  .panel { border: 0; box-shadow: none; padding: 0; }
+  #appView { display: block !important; }
+}
+
+/* MÓDULOS */
+.mod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; margin-top: 14px; }
+.mod-card { display: flex; gap: 14px; align-items: flex-start; border: 1px solid var(--line); border-left: 6px solid var(--yel); border-radius: 6px; padding: 14px; background: var(--card); cursor: pointer; transition: transform .1s, box-shadow .2s; }
+.mod-card:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0,0,0,0.12); }
+.mod-card.lock { opacity: .55; cursor: not-allowed; border-left-color: var(--line); }
+.mod-card.lock:hover { transform: none; box-shadow: none; }
+.mod-num { flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--steel-dark); color: var(--yel); display: flex; align-items: center; justify-content: center; font: 700 20px 'Barlow Condensed', sans-serif; }
+</style>
+</head>
+<body>
+
+<!-- 1. PANTALLA DE AUTENTICACIÓN (LOGIN) -->
+<div id="loginView">
+  <div class="login-card" id="loginCard">
+    <div class="brand-header">
+      <div class="brand-logo">METALPRO <span>SSOMA</span></div>
+      <h2 id="authTitle">Acceso a Inducción</h2>
+      <p id="authSub">Plataforma de Control de Seguridad y Medio Ambiente</p>
+    </div>
+
+    <div id="loginError" class="error-msg">Credenciales incorrectas. Verifique su código y contraseña.</div>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label for="inputCode">Código de Ingreso / DNI</label>
+        <div class="input-wrapper">
+          <input type="text" id="inputCode" placeholder="Su código o DNI" required autocomplete="username">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="inputPass">Contraseña</label>
+        <div class="input-wrapper">
+          <input type="password" id="inputPass" placeholder="••••••••" required autocomplete="current-password">
+          <button type="button" class="toggle-pwd" onclick="togglePasswordVisibility()" title="Mostrar/Ocultar clave">👁️</button>
+        </div>
+      </div>
+
+      <button type="submit" class="login-btn">
+        <span>Ingresar a la Plataforma</span> ➔
+      </button>
+    </form>
+
+    <!-- FORMULARIO DE REGISTRO -->
+    <form id="registerForm" onsubmit="handleRegister(event)" style="display:none;">
+      <div class="form-group">
+        <label for="regCargo">Cargo</label>
+        <select id="regCargo" class="form-select" onchange="onCargoChange()" required></select>
+        <div class="hint" id="regHint"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="regName">Nombre completo</label>
+        <div class="input-wrapper"><input type="text" id="regName" required autocomplete="name"></div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="regCode">Código / DNI</label>
+          <div class="input-wrapper"><input type="text" id="regCode" required autocomplete="username"></div>
+        </div>
+        <div class="form-group">
+          <label for="regEmail">Correo electrónico</label>
+          <div class="input-wrapper"><input type="text" id="regEmail" required autocomplete="email" placeholder="nombre@empresa.com"></div>
+        </div>
+      </div>
+      <div class="hint" id="regEmailHint" style="margin: -10px 0 16px;"></div>
+
+      <div class="form-group">
+        <label for="regArea">Área</label>
+        <select id="regArea" class="form-select">
+          <option value="Maestranza">Maestranza</option>
+          <option value="Estructuras">Estructuras</option>
+          <option value="Montaje">Montaje</option>
+          <option value="Mantenimiento">Mantenimiento</option>
+          <option value="Operaciones">Operaciones</option>
+          <option value="Prevención de Riesgos">Prevención de Riesgos</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="regPass">Contraseña</label>
+          <div class="input-wrapper"><input type="password" id="regPass" required autocomplete="new-password" placeholder="Mínimo 6 caracteres"></div>
+        </div>
+        <div class="form-group">
+          <label for="regPass2">Repetir contraseña</label>
+          <div class="input-wrapper"><input type="password" id="regPass2" required autocomplete="new-password"></div>
+        </div>
+      </div>
+
+      <div class="form-group" id="regAuthGroup" style="display:none;">
+        <label for="regAuth">Código de autorización de la empresa</label>
+        <div class="input-wrapper"><input type="text" id="regAuth" placeholder="Lo entrega MetalPro a supervisores y administradores"></div>
+      </div>
+
+      <button type="submit" class="login-btn"><span>Crear mi cuenta</span> ✓</button>
+      <div class="switch-auth">¿Ya tiene cuenta? <a onclick="showAuth('login')">Ingresar</a></div>
+    </form>
+
+    <div class="switch-auth" id="loginSwitch">¿Es nuevo? <a onclick="showAuth('register')">Regístrese aquí</a></div>
+  </div>
+</div>
+
+
+<!-- 2. PLATAFORMA DE TRABAJO (APP VIEW) -->
+<div id="appView">
+  <header>
+    <div>
+      <h1>MetalPro S.A. · Inducción SSOMA</h1>
+      <small>Sistema de Control y Gestión de Seguridad Industrial</small>
+    </div>
+
+    <div class="header-right">
+      <div class="user-profile-card">
+        <div class="avatar" id="hdrAvatar">CM</div>
+        <div class="user-info">
+          <strong id="hdrName">Carlos Mendoza</strong>
+          <small id="hdrSub">Operador CNC · Maestranza</small>
+        </div>
+      </div>
+
+      <div class="day-badge-container">
+        <span>Día SSOMA:</span>
+        <b id="hdrDay">—</b>
+      </div>
+
+      <button class="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">🌓</button>
+      <button class="btn-logout" onclick="confirmLogout()">Cerrar Sesión</button>
+    </div>
+  </header>
+
+  <div id="roleBanner" class="role-banner colaborador">
+    <div>
+      <span id="roleBadge" class="role-badge colaborador">NUEVO COLABORADOR</span>
+      <span id="roleBannerDesc" style="margin-left: 10px;">Acceso exclusivo a su itinerario personal de inducción.</span>
+    </div>
+    <div id="adminUserSelector" class="noprint" style="display:none; font-size: 13px;">
+      <span>Gestionando a: </span>
+      <select id="selectManagedUser" onchange="changeManagedUser(this.value)" style="font-size:12px; padding:2px 6px;"></select>
+    </div>
+  </div>
+
+  <nav role="tablist" id="nav"></nav>
+
+  <main>
+    <div class="panel" id="v"></div>
+  </main>
+</div>
+
+<!-- SISTEMA DE TOASTS -->
+<div id="toast"><span id="toastMsg">Mensaje del sistema</span></div>
+
+<!-- SISTEMA DE MODALES -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+
+<script>
+// ==========================================
+// CONFIGURACIÓN GENERAL
+// ==========================================
+const CODIGO_AUTORIZACION = 'METALPRO-2026'; // lo entrega la empresa a supervisores y administradores
+
+// Aviso por correo (EmailJS). Mientras estén vacíos se ofrece abrir el correo manualmente.
+const EMAIL_CONFIG = { publicKey: '', serviceId: '', templateId: '' };
+
+const REEVAL_HORAS = 48; // Falla teórica: reevaluación habilitada a las 48 horas
+
+// Metas por defecto (según el documento de Control de Gestión). El Administrador puede cambiarlas.
+const META_DEFAULT = { avance: 100, cronograma: 90, teoria: 85, competencias: 100, dias: 15 };
+
+const K = { users: 'metalpro_users_v2', desv: 'metalpro_desv_v2', meta: 'metalpro_meta_v2' };
+
+// Los 3 perfiles de acceso definidos en "Estructura de la plataforma"
+const PERFILES = {
+  colaborador: {
+    nombre: 'Nuevo Colaborador',
+    auth: false,
+    desc: 'Estudia los módulos, rinde las evaluaciones, realiza prácticas y monitorea su avance.',
+    cargos: ['Coordinador de Seguridad Industrial (SSOMA)']
+  },
+  supervisor: {
+    nombre: 'Supervisor',
+    auth: true,
+    desc: 'Monitorea el tablero en tiempo real, recibe alertas de desviación, aprueba prácticas en terreno y asigna refuerzos.',
+    cargos: ['Gerente de Planta', 'Director de Operaciones']
+  },
+  admin: {
+    nombre: 'Administrador',
+    auth: true,
+    desc: 'Gestiona usuarios, revisa contenidos y plan, y configura las metas e indicadores (KPI).',
+    cargos: ['Recursos Humanos (RR.HH.)', 'Tecnologías de la Información (IT)', 'Calidad']
+  }
+};
+
+// ==========================================
+// ALMACENAMIENTO (en el navegador)
+// ==========================================
+function leer(key, def) {
+  try { const v = JSON.parse(localStorage.getItem(key)); return v == null ? def : v; } catch (e) { return def; }
+}
+function guardar(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
+
+// Se eliminan los usuarios de prueba de versiones anteriores
+try { localStorage.removeItem('metalpro_users'); } catch (e) {}
+
+const USERS = [].concat(leer(K.users, []));
+const DESVIACIONES = [].concat(leer(K.desv, []));
+let META = Object.assign({}, META_DEFAULT, leer(K.meta, {}));
+
+const saveUsers = () => guardar(K.users, USERS);
+const saveDesv = () => guardar(K.desv, DESVIACIONES);
+
+// ==========================================
+// UTILIDADES
+// ==========================================
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const hoy = () => new Date().toISOString().split('T')[0];
+const fmtFecha = ts => new Date(ts).toLocaleString('es-PY', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+const colaboradores = () => USERS.filter(u => u.role === 'colaborador');
+const nextUserId = () => Math.max(0, ...USERS.map(u => u.id)) + 1;
+const nextDesvId = () => Math.max(100, ...DESVIACIONES.map(d => d.id)) + 1;
+const isStaff = () => !!state.currentUser && state.currentUser.role !== 'colaborador';
+const perfilDe = role => PERFILES[role] ? PERFILES[role].nombre : role;
+const shuffle = a => { const r = a.slice(); for (let i = r.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [r[i], r[j]] = [r[j], r[i]]; } return r; };
+const defaultTab = role => role === 'colaborador' ? 'resumen' : (role === 'supervisor' ? 'tablero' : 'colaboradores');
+
+// ==========================================
+// CONTENIDO DE LA INDUCCIÓN (7 módulos de la plataforma)
+// ==========================================
+const VIDEO_CARGO = 'https://www.youtube.com/embed/U83_vBFLMI0';
+
+const MODULOS = [
+  {
+    id: 'm1', titulo: 'Inducción General y Normativa', plazo: 2, horas: 3, responsable: 'RR.HH.',
+    resultado: 'Conoce la empresa, su cargo, la normativa y cómo será evaluado',
+    contenido: [
+      { h: 'La empresa', items: ['MetalPro S.A. es una industria metalúrgica con áreas de Maestranza, Estructuras, Montaje y Mantenimiento.', 'Tu cargo pertenece al Área de Operaciones.'] },
+      { h: 'Tu cargo: Coordinador de Seguridad Industrial', items: ['Reporta al Gerente de Planta (o Director de Operaciones).', 'Objetivo: garantizar la integridad física del personal y la seguridad en planta mediante el sistema de gestión SSOMA.', 'Funciones clave: diseñar políticas, investigar accidentes hasta su causa raíz y fiscalizar el uso de EPP y las inspecciones operativas.', 'Trabaja en enlace directo con Recursos Humanos para inducción, capacitaciones y reportes normativos.'] },
+      { h: 'Normativa', items: ['Norma de referencia del sistema: ISO 45001 (gestión de la seguridad y salud en el trabajo).', 'Además se cumple la legislación laboral y de seguridad vigente y el reglamento interno de la empresa.'] },
+      { h: 'Cómo se evalúa tu inducción', items: ['Debes completar el 100% de las actividades obligatorias en un máximo de 15 días hábiles.', 'Se mide con 5 indicadores: avance, adherencia al cronograma, eficacia del aprendizaje, competencias críticas y tiempo de adaptación.'] }
+    ],
+    preguntas: [
+      { q: '¿A quién reporta directamente el Coordinador de Seguridad Industrial?', ok: 'Al Gerente de Planta (o Director de Operaciones)', mal: ['Al Jefe de Compras', 'Al delegado sindical'] },
+      { q: '¿Cuál es el objetivo principal del cargo?', ok: 'Garantizar la integridad física del personal y la seguridad en planta mediante el sistema SSOMA', mal: ['Reducir el costo de materia prima', 'Aumentar las ventas de la planta'] },
+      { q: '¿En qué plazo máximo se debe completar el 100% de las actividades obligatorias de la inducción?', ok: '15 días hábiles', mal: ['5 días hábiles', '30 días hábiles'] },
+      { q: '¿Cuál es la norma de referencia del sistema de gestión de seguridad y salud en el trabajo?', ok: 'ISO 45001', mal: ['ISO 9001', 'ISO 14001'] }
+    ]
+  },
+  {
+    id: 'm2', titulo: 'Identificación de Riesgos en Planta', plazo: 5, horas: 4, responsable: 'Supervisor (Gerente de Planta)',
+    resultado: 'Identifica peligros del puesto y aplica la jerarquía de controles',
+    contenido: [
+      { h: 'Peligro y riesgo', items: ['Peligro: fuente, situación o acto con potencial de causar daño.', 'Riesgo: combinación de la probabilidad de que ocurra y la severidad de sus consecuencias.', 'La Matriz IPERC (pestaña "Matriz IPERC") ordena los peligros, riesgos y controles de cada actividad.'] },
+      { h: 'Peligros típicos en planta metalúrgica', items: ['Proyección de partículas y chispas (corte, soldadura, esmerilado).', 'Ruido continuo mayor a 85 dBA.', 'Manipulación de cargas pesadas.', 'Energía eléctrica de alta potencia.', 'Sustancias químicas (solventes, pinturas).'] },
+      { h: 'Jerarquía de controles (de más a menos efectiva)', items: ['1) Eliminación, 2) Sustitución, 3) Controles de ingeniería, 4) Controles administrativos, 5) EPP.', 'El EPP es la última barrera: nunca reemplaza a los controles anteriores.'] }
+    ],
+    preguntas: [
+      { q: '¿Cuál describe mejor un "peligro"?', ok: 'Una fuente, situación o acto con potencial de causar daño', mal: ['La probabilidad de que ocurra un accidente', 'Un equipo de protección personal'] },
+      { q: 'En la jerarquía de controles, ¿cuál es la medida más efectiva?', ok: 'Eliminar el peligro', mal: ['Entregar EPP', 'Capacitar al personal'] },
+      { q: 'El nivel de un riesgo se estima combinando:', ok: 'Probabilidad y severidad', mal: ['Costo y duración', 'Antigüedad y área'] },
+      { q: 'Si el ruido continuo en Maestranza supera los 85 dBA, corresponde:', ok: 'Usar protección auditiva y aplicar medidas de control', mal: ['No hacer nada, es normal en una planta', 'Avisar al supervisor recién al terminar el turno'] }
+    ]
+  },
+  {
+    id: 'm3', titulo: 'Sistema de Gestión SSOMA e ISO 45001', plazo: 8, horas: 4, responsable: 'Calidad',
+    resultado: 'Comprende el ciclo PHVA, la investigación de accidentes y la gestión documental',
+    contenido: [
+      { h: 'ISO 45001', items: ['Establece los requisitos de un sistema de gestión de seguridad y salud en el trabajo.', 'Exige liderazgo de la dirección, participación de los trabajadores, política y objetivos de SST.'] },
+      { h: 'Ciclo PHVA (mejora continua)', items: ['Planificar: identificar peligros, fijar objetivos y controles.', 'Hacer: aplicar los controles y capacitar.', 'Verificar: inspeccionar, auditar y medir indicadores.', 'Actuar: corregir desviaciones y mejorar.'] },
+      { h: 'Investigación de accidentes y gestión documental', items: ['Se investiga hasta la causa raíz para evitar que el hecho se repita; no para buscar culpables.', 'Los registros (inspecciones, capacitaciones, incidentes, permisos) son la evidencia del cumplimiento y permiten verificar la eficacia del sistema.'] }
+    ],
+    preguntas: [
+      { q: 'ISO 45001 establece requisitos para:', ok: 'Sistemas de gestión de seguridad y salud en el trabajo', mal: ['La calidad de los productos', 'La gestión ambiental'] },
+      { q: 'PHVA significa:', ok: 'Planificar, Hacer, Verificar, Actuar', mal: ['Prevenir, Hallar, Valorar, Aplicar', 'Planear, Hacer, Validar, Archivar'] },
+      { q: 'El objetivo de investigar un accidente es:', ok: 'Identificar las causas raíz para evitar que se repita', mal: ['Encontrar a un culpable', 'Cerrar el caso lo más rápido posible'] },
+      { q: '¿Por qué se mantienen registros documentados en el sistema SSOMA?', ok: 'Para evidenciar el cumplimiento y verificar la eficacia de los controles', mal: ['Solo para tener la carpeta completa', 'Únicamente si hay una inspección externa'] }
+    ]
+  },
+  {
+    id: 'm4', titulo: 'Permisos de Trabajo Seguro (PTS) y LOTO', plazo: 11, horas: 5, responsable: 'Supervisor (Gerente de Planta)',
+    resultado: 'Emite PTS correctamente y aplica el bloqueo y etiquetado (LOTO)',
+    contenido: [
+      { h: 'Permiso de Trabajo Seguro (PTS)', items: ['Autorización escrita que se firma ANTES de iniciar un trabajo de alto riesgo.', 'Se exige para trabajos en altura (mayor a 1,80 m), en caliente (soldadura y corte), en espacios confinados y con energía eléctrica.', 'Debe indicar: trabajo, riesgos, controles, responsables, vigencia, firma de autorización y cierre.', 'Autorizar un PTS sin verificar los controles es un error crítico.'] },
+      { h: 'Controles mínimos por tipo de trabajo', items: ['Altura: arnés con doble cabo anclado a un punto certificado.', 'Caliente: extintor presente, retiro de materiales combustibles y vigía de fuego.'] },
+      { h: 'LOTO (Bloqueo y Etiquetado)', items: ['Pasos: 1) avisar, 2) apagar el equipo, 3) aislar las energías, 4) bloquear con candado personal, 5) etiquetar, 6) liberar la energía residual, 7) verificar energía cero intentando arrancar.', 'Solo quien colocó el candado puede retirarlo.'] }
+    ],
+    preguntas: [
+      { q: 'Antes de iniciar un trabajo de alto riesgo (altura, caliente, espacio confinado) se debe contar con:', ok: 'Un PTS autorizado y firmado', mal: ['Una autorización verbal de un compañero', 'Nada, si el trabajo es corto'] },
+      { q: 'LOTO consiste en:', ok: 'Bloquear y etiquetar las fuentes de energía antes de intervenir un equipo', mal: ['Limpiar y ordenar los pasillos al terminar el turno', 'Medir gases en áreas de almacenamiento'] },
+      { q: '¿Quién puede retirar un candado de bloqueo LOTO?', ok: 'La persona que lo colocó', mal: ['Cualquier supervisor', 'El primero que lo necesite'] },
+      { q: 'Antes de intervenir un equipo bloqueado se debe:', ok: 'Verificar energía cero intentando arrancarlo', mal: ['Retirar la etiqueta para ver mejor', 'Avisar por radio y empezar de inmediato'] }
+    ]
+  },
+  {
+    id: 'm5', titulo: 'Software de Gestión HSE', plazo: 13, horas: 3, responsable: 'Tecnologías de la Información (IT)',
+    resultado: 'Registra hallazgos e incidentes de forma autónoma en el sistema',
+    contenido: [
+      { h: 'Para qué sirve', items: ['Centraliza el registro de incidentes y casi-accidentes, inspecciones, permisos, capacitaciones e indicadores.', 'Genera alertas automáticas cuando un resultado se desvía de la meta.'] },
+      { h: 'Registro autónomo de una desviación', items: ['Se indica: área, tipo (acto o condición subestándar), severidad y descripción clara.', 'Se registra el mismo día del hallazgo, con datos verificables.', 'Las acciones correctivas se cierran con evidencia.'] },
+      { h: 'Buenas prácticas', items: ['El usuario y la contraseña son personales: todo registro debe ser trazable a quien lo hizo.', 'Un casi-accidente también se registra: permite prevenir el accidente real.'] }
+    ],
+    preguntas: [
+      { q: 'Un casi-accidente (sin lesiones) debe:', ok: 'Registrarse en el sistema HSE para analizarlo', mal: ['Ignorarse porque nadie se lastimó', 'Comentarse solo de forma verbal'] },
+      { q: 'Al registrar una desviación en el software se indica:', ok: 'Área, tipo, severidad y descripción', mal: ['Solo el nombre del trabajador', 'Únicamente la fecha'] },
+      { q: 'Compartir tu usuario y contraseña con un compañero:', ok: 'Está prohibido: los registros deben ser trazables a cada persona', mal: ['Es válido si estás muy ocupado', 'Es válido entre supervisores'] },
+      { q: 'Una acción correctiva se considera cerrada cuando:', ok: 'Se ejecutó y se verificó con evidencia', mal: ['Se asignó a un responsable', 'Pasó una semana desde el hallazgo'] }
+    ]
+  },
+  {
+    id: 'm6', titulo: 'Respuesta a Emergencias', plazo: 14, horas: 4, responsable: 'Supervisor (Gerente de Planta)',
+    resultado: 'Actúa correctamente ante incendios, evacuaciones y primeros auxilios',
+    contenido: [
+      { h: 'Extintores según el tipo de fuego', items: ['Clase A: sólidos (madera, papel). Clase B: líquidos inflamables. Clase C: equipos eléctricos energizados. Clase D: metales combustibles.', 'En tableros energizados se usa CO2 o polvo químico seco apto para fuego eléctrico. Nunca agua.'] },
+      { h: 'Evacuación', items: ['Seguir la ruta señalizada hasta el punto de encuentro.', 'No regresar por objetos ni por otras personas; esperar la autorización para reingresar.'] },
+      { h: 'Primeros auxilios y reporte', items: ['PAS: Proteger, Avisar, Socorrer.', 'Todo accidente o incidente se reporta de inmediato al supervisor y a SSOMA.', 'Los simulacros se evalúan con cero errores críticos.'] }
+    ],
+    preguntas: [
+      { q: 'Ante un amago de incendio en un tablero eléctrico energizado se usa:', ok: 'Extintor de CO2 o polvo químico seco apto para fuego eléctrico', mal: ['Agua a presión', 'Una manta de tela sintética'] },
+      { q: 'PAS significa:', ok: 'Proteger, Avisar, Socorrer', mal: ['Parar, Atender, Salir', 'Prevenir, Alertar, Sellar'] },
+      { q: 'Durante una evacuación se debe:', ok: 'Ir por la ruta señalizada al punto de encuentro y no regresar hasta ser autorizado', mal: ['Recoger primero los objetos personales', 'Volver a buscar a los compañeros'] },
+      { q: 'Un accidente o incidente debe reportarse:', ok: 'De inmediato al supervisor y a SSOMA', mal: ['Al final de la semana', 'Solo si hay lesión grave'] }
+    ]
+  },
+  {
+    id: 'm7', titulo: 'Dashboard de Control', plazo: 15, horas: 2, responsable: 'RR.HH.',
+    resultado: 'Interpreta sus indicadores y sabe qué ocurre si no alcanza la meta',
+    contenido: [
+      { h: 'Qué se mide (5 indicadores)', items: ['Avance global (meta 100%), adherencia al cronograma (≥ 90%), eficacia del aprendizaje (≥ 85%), competencias críticas (100%) y tiempo de adaptación (≤ 15 días hábiles).'] },
+      { h: 'Ciclo automático de control', items: ['Medir → Comparar → Alertar desviación → Ejecutar refuerzo → Reevaluar.'] },
+      { h: 'Qué ocurre si no alcanzas la meta', items: ['Falla teórica (menos del 85%): se asigna refuerzo y se habilita la reevaluación a las 48 horas.', 'Falla en práctica de PTS: se bloquea la firma de permisos y se realiza tutoría presencial con el Gerente de Planta.', 'Atraso en el cronograma (menos del 90%): se alerta a RR.HH. y al supervisor para liberar horas de inducción.'] }
+    ],
+    preguntas: [
+      { q: 'Si obtienes menos del 85% en una evaluación teórica, la plataforma:', ok: 'Asigna refuerzo y habilita la reevaluación a las 48 horas', mal: ['Te aprueba igualmente', 'Elimina tu usuario'] },
+      { q: 'El avance global de la inducción se calcula como:', ok: 'Módulos completados / módulos programados', mal: ['Horas de estudio / horas totales', 'Cantidad de ingresos a la plataforma'] },
+      { q: 'La meta de tiempo de adaptación es:', ok: '15 días hábiles o menos', mal: ['45 días hábiles o menos', 'No tiene límite'] },
+      { q: 'El ciclo automático de control es:', ok: 'Medir, comparar, alertar desviación, ejecutar refuerzo y reevaluar', mal: ['Estudiar, olvidar y repetir', 'Planificar, imprimir y archivar'] }
+    ]
+  }
+];
+
+// Prácticas en terreno que valida el Supervisor (competencias críticas)
+const PRACTICAS = [
+  { id: 'pts', nombre: 'Emisión de Permiso de Trabajo Seguro (PTS)' },
+  { id: 'loto', nombre: 'Bloqueo y etiquetado (LOTO)' },
+  { id: 'emergencia', nombre: 'Simulacro de emergencia (cero errores críticos)' },
+  { id: 'hse', nombre: 'Registro autónomo en software HSE' }
+];
+
+const MATRIZ_IPERC = [
+  { peligro: 'Proyección de partículas incandescentes', riesgo: 'Quemaduras oculares o cutáneas', nivel: 'Alto', control: 'Careta facial de soldar + lentes de seguridad + ropa de cuero cromo.' },
+  { peligro: 'Ruido continuo (>85 dBA en Maestranza)', riesgo: 'Hipoacusia neurosensorial', nivel: 'Medio', control: 'Protección auditiva tipo copa o tapones con atenuación adecuada.' },
+  { peligro: 'Manipulación de cargas pesadas', riesgo: 'Trastornos musculoesqueléticos / lumbago', nivel: 'Medio', control: 'Uso obligatorio de puente grúa para piezas pesadas y postura ergonómica.' },
+  { peligro: 'Energía eléctrica de alta potencia', riesgo: 'Electrocución / arco eléctrico', nivel: 'Alto', control: 'Procedimiento de Bloqueo y Etiquetado (LOTO) e inspección previa de cables.' },
+  { peligro: 'Sustancias químicas (solventes / pinturas)', riesgo: 'Inhalación de vapores / dermatitis', nivel: 'Bajo', control: 'Respirador con cartuchos para vapores orgánicos y guantes de nitrilo.' },
+  { peligro: 'Trabajo en altura (> 1,80 m)', riesgo: 'Caída a distinto nivel', nivel: 'Alto', control: 'PTS de altura + arnés con doble cabo anclado a punto certificado.' }
+];
+
+const PUNTOS_CRITICOS = [
+  'Autorización errónea de un Permiso de Trabajo Seguro (PTS).',
+  'Omisión de los protocolos de bloqueo y etiquetado (LOTO).',
+  'Desconocimiento de los peligros operativos de la planta.',
+  'Investigación deficiente de accidentes (sin causa raíz).',
+  'Falta de fiscalización del uso de EPP.'
+];
+
+// ==========================================
+// ESTADO
+// ==========================================
+let state = {
+  currentUser: null,
+  managedUserId: null,
+  activeTab: 'resumen',
+  moduloSel: null,
+  enQuiz: false,
+  quizOrden: [],
+  ipercFilter: 'ALL',
+  ipercSearch: ''
+};
+
+// Tabs: primero las de gestión (staff) y luego las personales
+const TABS_CONFIG = [
+  { id: 'tablero', label: 'Tablero KPIs', icon: '📊', roles: ['supervisor', 'admin'] },
+  { id: 'desviaciones', label: 'Desviaciones SSOMA', icon: '🚨', roles: ['supervisor', 'admin'] },
+  { id: 'colaboradores', label: 'Seguimiento & Usuarios', icon: '👥', roles: ['supervisor', 'admin'] },
+  { id: 'plan', label: 'Plan de Inducción', icon: '📅', roles: ['supervisor', 'admin'] },
+  { id: 'puntos_criticos', label: 'Puntos Críticos & PTS', icon: '⚡', roles: ['supervisor', 'admin'] },
+  { id: 'resumen', label: 'Mi Inducción', labelStaff: 'Resumen del Colaborador', icon: '📋', roles: ['colaborador', 'supervisor', 'admin'] },
+  { id: 'modulos', label: 'Módulos & Evaluación', labelStaff: 'Módulos & Resultados', icon: '📚', roles: ['colaborador', 'supervisor', 'admin'] },
+  { id: 'capacitacion', label: 'Video & Notas', icon: '🎥', roles: ['colaborador'] },
+  { id: 'iperc', label: 'Matriz IPERC', icon: '⚠️', roles: ['colaborador', 'supervisor', 'admin'] },
+  { id: 'firma', label: 'Ficha / Firma', icon: '🔏', roles: ['colaborador', 'supervisor', 'admin'] }
+];
+
+// ==========================================
+// MÉTRICAS DE CONTROL DE GESTIÓN
+// ==========================================
+function metricas(u) {
+  const mods = u.modulos || {};
+  const aprobados = MODULOS.filter(m => mods[m.id] && mods[m.id].aprobado);
+  const evaluados = MODULOS.filter(m => mods[m.id]);
+  const avance = Math.round(aprobados.length / MODULOS.length * 100);
+  const ptsObt = evaluados.reduce((s, m) => s + mods[m.id].pts, 0);
+  const ptsTot = evaluados.reduce((s, m) => s + mods[m.id].total, 0);
+  const eficacia = ptsTot ? Math.round(ptsObt / ptsTot * 100) : null;
+  const vencidos = MODULOS.filter(m => u.diaActual > m.plazo);
+  const atrasados = vencidos.filter(m => !(mods[m.id] && mods[m.id].aprobado));
+  const adherencia = vencidos.length ? Math.round((vencidos.length - atrasados.length) / vencidos.length * 100) : 100;
+  const pr = u.practicas || {};
+  const prAprob = PRACTICAS.filter(p => pr[p.id] === 'aprobada').length;
+  const competencias = Math.round(prAprob / PRACTICAS.length * 100);
+  const ptsBloqueado = pr.pts === 'reprobada';
+  let estado = 'En proceso';
+  if (avance === 100 && competencias === 100) estado = 'Habilitado';
+  else if (atrasados.length || u.diaActual > META.dias) estado = 'Atrasado';
+  return { aprobados: aprobados.length, evaluados: evaluados.length, avance, eficacia, adherencia, atrasados, competencias, prAprob, ptsBloqueado, dias: u.diaActual, estado };
+}
+const estadoCls = e => e === 'Habilitado' ? 'ok' : (e === 'Atrasado' ? 'bad' : 'wait');
+
+// ==========================================
+// AUTENTICACIÓN Y REGISTRO
+// ==========================================
+function showAuthMsg(msg, ok) {
+  const el = document.getElementById('loginError');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.background = ok ? 'var(--grnbg)' : '';
+  el.style.color = ok ? 'var(--grn)' : '';
+  el.style.borderLeftColor = ok ? 'var(--grn)' : '';
+}
+
+function showAuth(mode) {
+  const reg = mode === 'register';
+  document.getElementById('loginForm').style.display = reg ? 'none' : 'block';
+  document.getElementById('loginSwitch').style.display = reg ? 'none' : 'block';
+  document.getElementById('registerForm').style.display = reg ? 'block' : 'none';
+  document.getElementById('authTitle').textContent = reg ? 'Crear Cuenta' : 'Acceso a Inducción';
+  document.getElementById('authSub').textContent = reg ? 'Elija su cargo y complete sus datos' : 'Plataforma de Control de Seguridad y Medio Ambiente';
+  document.getElementById('loginError').style.display = 'none';
+  if (reg) onCargoChange();
+}
+
+function initCargoSelect() {
+  const sel = document.getElementById('regCargo');
+  let html = '<option value="">Seleccione su cargo…</option>';
+  Object.keys(PERFILES).forEach(role => {
+    const p = PERFILES[role];
+    html += `<optgroup label="${esc(p.nombre)}">` + p.cargos.map(c => `<option value="${role}|${esc(c)}">${esc(c)}</option>`).join('') + '</optgroup>';
+  });
+  sel.innerHTML = html;
+}
+
+function cargoSeleccionado() {
+  const v = document.getElementById('regCargo').value;
+  if (!v) return null;
+  const i = v.indexOf('|');
+  return { role: v.slice(0, i), cargo: v.slice(i + 1) };
+}
+
+function onCargoChange() {
+  const sel = cargoSeleccionado();
+  const p = sel ? PERFILES[sel.role] : null;
+  document.getElementById('regHint').textContent = p ? `Perfil: ${p.nombre}. ${p.desc}` : 'Los cargos están agrupados según su perfil de acceso.';
+  document.getElementById('regAuthGroup').style.display = p && p.auth ? 'block' : 'none';
+  document.getElementById('regAuth').required = !!(p && p.auth);
+  document.getElementById('regEmailHint').textContent = sel && sel.role === 'supervisor'
+    ? 'A este correo llegarán las alertas de desviación.'
+    : 'Se usará para comunicaciones y alertas de la inducción.';
+}
+
+function handleRegister(e) {
+  e.preventDefault();
+  const clean = s => s.replace(/[<>]/g, '').trim();
+  const sel = cargoSeleccionado();
+  if (!sel) return showAuthMsg('Seleccione su cargo.', false);
+  const nombre = clean(document.getElementById('regName').value);
+  const code = clean(document.getElementById('regCode').value);
+  const email = document.getElementById('regEmail').value.trim();
+  const area = document.getElementById('regArea').value;
+  const pass = document.getElementById('regPass').value;
+  const pass2 = document.getElementById('regPass2').value;
+  const isColab = sel.role === 'colaborador';
+
+  if (!nombre || !code) return showAuthMsg('Complete su nombre y su código / DNI.', false);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showAuthMsg('Ingrese un correo electrónico válido.', false);
+  if (pass.length < 6) return showAuthMsg('La contraseña debe tener al menos 6 caracteres.', false);
+  if (pass !== pass2) return showAuthMsg('Las contraseñas no coinciden.', false);
+  if (USERS.some(u => u.code.toLowerCase() === code.toLowerCase())) return showAuthMsg('Ya existe un usuario con ese código / DNI.', false);
+  if (PERFILES[sel.role].auth && document.getElementById('regAuth').value.trim() !== CODIGO_AUTORIZACION) {
+    return showAuthMsg('Código de autorización incorrecto. Solicítelo a la empresa.', false);
+  }
+
+  const user = { id: nextUserId(), code, pass, email, nombre, role: sel.role, cargo: sel.cargo, area, fechaIngreso: hoy() };
+  if (isColab) Object.assign(user, { diaActual: 1, eppEntregado: false, tutor: 'Gerente de Planta', modulos: {}, practicas: {} });
+  USERS.push(user);
+  saveUsers();
+
+  document.getElementById('registerForm').reset();
+  showAuth('login');
+  document.getElementById('inputCode').value = code;
+  document.getElementById('inputPass').value = '';
+  showAuthMsg('¡Cuenta creada! Ahora ingrese con su código y contraseña.', true);
+}
+
+function togglePasswordVisibility() {
+  const pwdInput = document.getElementById('inputPass');
+  pwdInput.type = (pwdInput.type === 'password') ? 'text' : 'password';
+}
+
+function handleLogin(e) {
+  e.preventDefault();
+  const code = document.getElementById('inputCode').value.trim();
+  const pass = document.getElementById('inputPass').value.trim();
+  const user = USERS.find(u => u.code.toLowerCase() === code.toLowerCase() && u.pass === pass);
+
+  if (!user) {
+    const card = document.getElementById('loginCard');
+    showAuthMsg(USERS.length ? 'Credenciales incorrectas. Verifique su código y contraseña.' : 'Aún no hay usuarios registrados. Use "Regístrese aquí" para crear el primero.', false);
+    card.classList.remove('shake');
+    void card.offsetWidth;
+    card.classList.add('shake');
+    return;
+  }
+
+  document.getElementById('loginError').style.display = 'none';
+  state.currentUser = user;
+  state.moduloSel = null;
+  state.enQuiz = false;
+  const primero = colaboradores()[0];
+  state.managedUserId = user.role === 'colaborador' ? user.id : (primero ? primero.id : null);
+  state.activeTab = defaultTab(user.role);
+
+  document.getElementById('loginView').style.display = 'none';
+  document.getElementById('appView').style.display = 'flex';
+  setupHeaderAndUI();
+  renderNav();
+  renderView();
+  showToast(`¡Bienvenido/a, ${user.nombre}!`);
+}
+
+function confirmLogout() {
+  showModal(`
+    <h3>¿Cerrar Sesión?</h3>
+    <p>¿Está seguro que desea salir de la plataforma SSOMA?</p>
+    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn btn-outline" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-red" onclick="logout()">Sí, Cerrar Sesión</button>
+    </div>
+  `);
+}
+
+function logout() {
+  closeModal();
+  state.currentUser = null;
+  document.getElementById('appView').style.display = 'none';
+  document.getElementById('loginView').style.display = 'flex';
+  document.getElementById('loginForm').reset();
+  showAuth('login');
+  showToast('Sesión cerrada correctamente');
+}
+
+// ==========================================
+// INTERFAZ Y NAVEGACIÓN
+// ==========================================
+function targetUser() {
+  const u = state.currentUser;
+  if (!u) return null;
+  if (u.role === 'colaborador') return u;
+  return USERS.find(x => x.id === state.managedUserId && x.role === 'colaborador') || null;
+}
+
+function setupHeaderAndUI() {
+  const u = state.currentUser;
+  const staff = u.role !== 'colaborador';
+  const initials = u.nombre.split(' ').filter(Boolean).map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  document.getElementById('hdrAvatar').textContent = initials;
+  document.getElementById('hdrName').textContent = u.nombre;
+  document.getElementById('hdrSub').textContent = `${u.cargo} · ${u.area}`;
+
+  const banner = document.getElementById('roleBanner');
+  const badge = document.getElementById('roleBadge');
+  banner.className = 'role-banner ' + u.role;
+  badge.className = 'role-badge ' + u.role;
+  badge.textContent = perfilDe(u.role).toUpperCase();
+  document.getElementById('roleBannerDesc').textContent = PERFILES[u.role].desc;
+
+  const selWrap = document.getElementById('adminUserSelector');
+  if (staff) {
+    selWrap.style.display = 'inline-block';
+    const sel = document.getElementById('selectManagedUser');
+    const cols = colaboradores();
+    sel.innerHTML = cols.length
+      ? cols.map(c => `<option value="${c.id}" ${c.id === state.managedUserId ? 'selected' : ''}>${esc(c.nombre)}</option>`).join('')
+      : '<option value="">Sin colaboradores registrados</option>';
+  } else {
+    selWrap.style.display = 'none';
+  }
+
+  const t = targetUser();
+  document.getElementById('hdrDay').textContent = t ? `Día ${t.diaActual} de ${META.dias}` : '—';
+}
+
+function changeManagedUser(userId) {
+  state.managedUserId = Number(userId);
+  state.moduloSel = null;
+  state.enQuiz = false;
+  const t = targetUser();
+  if (t) showToast(`Inspeccionando a: ${t.nombre}`);
+  setupHeaderAndUI();
+  renderView();
+}
+
+function renderNav() {
+  const nav = document.getElementById('nav');
+  const role = state.currentUser.role;
+  const staff = role !== 'colaborador';
+  nav.innerHTML = TABS_CONFIG.filter(t => t.roles.includes(role)).map(tab => `
+    <button role="tab" aria-selected="${tab.id === state.activeTab}" onclick="switchTab('${tab.id}')">
+      <span>${tab.icon}</span> ${esc(staff && tab.labelStaff ? tab.labelStaff : tab.label)}
+    </button>
+  `).join('');
+}
+
+function switchTab(tabId) {
+  const role = state.currentUser.role;
+  const tab = TABS_CONFIG.find(t => t.id === tabId);
+  if (!tab || !tab.roles.includes(role)) {
+    showToast('⛔ Acceso denegado: su perfil no tiene permisos para esta pestaña');
+    state.activeTab = 'denegado';
+    renderNav();
+    renderAccesoDenegado();
+    return;
+  }
+  state.activeTab = tabId;
+  if (tabId !== 'modulos') { state.moduloSel = null; state.enQuiz = false; }
+  renderNav();
+  renderView();
+}
+
+function renderAccesoDenegado() {
+  document.getElementById('v').innerHTML = `
+    <div style="text-align:center; padding: 40px 20px;">
+      <div style="font-size:60px; margin-bottom:10px;">🔒</div>
+      <h2 style="color:var(--red); border:none;">Acceso restringido por perfil</h2>
+      <p style="max-width:500px; margin:0 auto 20px;">Su perfil <strong>${esc(perfilDe(state.currentUser.role))}</strong> no tiene autorización para este módulo.</p>
+      <button class="btn btn-steel" onclick="switchTab(defaultTab(state.currentUser.role))">🏠 Volver al inicio</button>
+    </div>`;
+}
+
+function emptyState(container, texto) {
+  container.innerHTML = `
+    <div style="text-align:center; padding: 50px 20px;">
+      <div style="font-size:50px; margin-bottom:10px;">👤</div>
+      <h2 style="border:none;">Sin colaboradores</h2>
+      <p style="max-width:520px; margin:0 auto;">${texto}</p>
+    </div>`;
+}
+
+function renderView() {
+  const c = document.getElementById('v');
+  const tab = state.activeTab;
+  const necesitaColab = ['resumen', 'modulos', 'capacitacion', 'firma'].includes(tab);
+  const t = targetUser();
+  if (necesitaColab && !t) {
+    return emptyState(c, 'Todavía no hay ningún Nuevo Colaborador registrado. Cuando el Coordinador SSOMA cree su cuenta desde "Regístrese aquí", podrá ver su avance en esta sección.');
+  }
+  switch (tab) {
+    case 'resumen': return renderResumen(c, t);
+    case 'modulos': return renderModulos(c, t);
+    case 'capacitacion': return renderCapacitacion(c, t);
+    case 'iperc': return renderIPERC(c);
+    case 'firma': return renderFirma(c, t);
+    case 'plan': return renderPlan(c, t);
+    case 'colaboradores': return renderColaboradores(c);
+    case 'tablero': return renderTablero(c);
+    case 'desviaciones': return renderDesviaciones(c);
+    case 'puntos_criticos': return renderPuntosCriticos(c);
+    case 'denegado': return renderAccesoDenegado();
+    default: c.innerHTML = '<h2>Vista no disponible</h2>';
+  }
+}
+
+// ==========================================
+// VISTAS DEL COLABORADOR
+// ==========================================
+function kpiBox(titulo, valor, meta, ok, extra) {
+  const cls = ok === null ? 'info' : (ok ? 'ok' : 'bad');
+  return `<div class="kpi ${cls}"><small>${titulo}</small><b>${valor}</b><small>${meta}</small>${extra || ''}</div>`;
+}
+
+function renderResumen(container, u) {
+  const m = metricas(u);
+  const staff = isStaff();
+  const prox = MODULOS.find(x => !(u.modulos[x.id] && u.modulos[x.id].aprobado));
+  const avisos = [];
+
+  if (m.estado === 'Habilitado') avisos.push('<div class="alert g"><strong>✅ Inducción completada y habilitación final otorgada</strong><small>Todos los módulos y prácticas críticas están aprobados.</small></div>');
+  if (m.ptsBloqueado) avisos.push('<div class="alert"><strong>🔒 Firma de Permisos de Trabajo (PTS) bloqueada</strong><small>Falla en la práctica de PTS: tutoría presencial con el Gerente de Planta y simulación en terreno.</small></div>');
+  m.atrasados.forEach(x => avisos.push(`<div class="alert"><strong>⏰ Atraso: ${esc(x.titulo)}</strong><small>Plazo previsto: día ${x.plazo}. Día actual: ${u.diaActual}.</small></div>`));
+  MODULOS.forEach(x => {
+    const r = u.modulos[x.id];
+    if (r && !r.aprobado && r.reevalDesde > Date.now()) avisos.push(`<div class="alert y"><strong>📖 Refuerzo asignado: ${esc(x.titulo)}</strong><small>Reevaluación habilitada desde ${fmtFecha(r.reevalDesde)}.</small></div>`);
+  });
+  if (prox) avisos.push(`<div class="alert b"><strong>➡️ Siguiente módulo: ${esc(prox.titulo)}</strong><small>Plazo: día ${prox.plazo} · Tiempo previsto: ${prox.horas} h.</small></div>`);
+
+  container.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:6px 24px; flex:1; min-width:260px;">
+        <div><small style="color:var(--mut)">Colaborador</small><br><b>${esc(u.nombre)}</b></div>
+        <div><small style="color:var(--mut)">Cargo</small><br><b>${esc(u.cargo)}</b></div>
+        <div><small style="color:var(--mut)">Área</small><br><b>${esc(u.area)}</b></div>
+        <div><small style="color:var(--mut)">Tutor asignado</small><br><b>${esc(u.tutor)}</b></div>
+      </div>
+      <span class="st ${estadoCls(m.estado)}" style="font-size:15px; padding:6px 14px;">${m.estado === 'Habilitado' ? '✅ ' : m.estado === 'Atrasado' ? '⚠️ ' : '⏳ '}${m.estado.toUpperCase()}</span>
+    </div>
+
+    <div class="kpis">
+      ${kpiBox('Avance global', m.avance + '%', `${m.aprobados} de ${MODULOS.length} módulos (meta ${META.avance}%)`, m.avance >= META.avance, `<div class="bar ${m.avance >= 100 ? 'grn' : ''}"><i style="width:${m.avance}%"></i></div>`)}
+      ${kpiBox('Eficacia del aprendizaje', m.eficacia == null ? '—' : m.eficacia + '%', `Meta ≥ ${META.teoria}%`, m.eficacia == null ? null : m.eficacia >= META.teoria)}
+      ${kpiBox('Adherencia al cronograma', m.adherencia + '%', `Meta ≥ ${META.cronograma}%`, m.adherencia >= META.cronograma)}
+      ${kpiBox('Competencias críticas', m.competencias + '%', `${m.prAprob} de ${PRACTICAS.length} prácticas (meta ${META.competencias}%)`, m.competencias >= META.competencias)}
+      ${kpiBox('Tiempo de adaptación', `Día ${u.diaActual}`, `Meta ≤ ${META.dias} días hábiles`, u.diaActual <= META.dias)}
+    </div>
+
+    <div class="cols">
+      <div>
+        <h2>Alertas y próximos pasos</h2>
+        ${avisos.join('') || '<div class="alert g"><strong>Sin alertas</strong></div>'}
+
+        <h3>Entrega de EPP</h3>
+        <div class="crit">
+          <input type="checkbox" ${u.eppEntregado ? 'checked' : ''} ${staff ? '' : 'disabled'} onchange="toggleEPPStatus(${u.id})">
+          <span>Recepción y ajuste de EPP estándar MetalPro ${staff ? '' : '(lo confirma el supervisor)'}.</span>
+        </div>
+      </div>
+
+      <div>
+        <h2>Estado por módulo</h2>
+        ${MODULOS.map(x => {
+          const r = u.modulos[x.id];
+          const vencido = u.diaActual > x.plazo && !(r && r.aprobado);
+          const cls = r && r.aprobado ? 'ok' : (vencido ? 'bad' : (r ? 'wait' : 'info'));
+          const txt = r && r.aprobado ? `Aprobado (${r.pct}%)` : (r ? `No aprobado (${r.pct}%)` : 'Pendiente');
+          return `<div class="crit" style="justify-content:space-between;"><span><strong>${esc(x.titulo)}</strong><br><small style="color:var(--mut)">Plazo: día ${x.plazo}</small></span><span class="st ${cls}">${txt}</span></div>`;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function toggleEPPStatus(userId) {
+  const u = USERS.find(x => x.id === userId);
+  if (!u) return;
+  u.eppEntregado = !u.eppEntregado;
+  saveUsers();
+  showToast(`Estatus EPP actualizado para ${u.nombre}`);
+  renderView();
+}
+
+// ---------- MÓDULOS Y EVALUACIÓN ----------
+function moduloBloqueado(u, i) {
+  if (isStaff() || i === 0) return false;
+  const prev = u.modulos[MODULOS[i - 1].id];
+  return !(prev && prev.aprobado);
+}
+
+function renderModulos(container, u) {
+  const m = MODULOS.find(x => x.id === state.moduloSel);
+  if (!m) {
+    container.innerHTML = `
+      <h2>Módulos de Inducción</h2>
+      <p>${isStaff() ? 'Contenido y resultados del colaborador seleccionado.' : 'Estudie cada módulo y rinda su evaluación. Debe aprobar un módulo para habilitar el siguiente.'} Aprobación mínima: <strong>${META.teoria}%</strong>.</p>
+      <div class="mod-grid">
+        ${MODULOS.map((x, i) => {
+          const r = u.modulos[x.id];
+          const lock = moduloBloqueado(u, i);
+          const vencido = u.diaActual > x.plazo && !(r && r.aprobado);
+          let pill = '<span class="st info">Pendiente</span>';
+          if (r && r.aprobado) pill = `<span class="st ok">Aprobado ${r.pct}%</span>`;
+          else if (r) pill = `<span class="st wait">Refuerzo · ${r.pct}%</span>`;
+          else if (lock) pill = '<span class="st wait">🔒 Bloqueado</span>';
+          return `
+            <div class="mod-card ${lock ? 'lock' : ''}" ${lock ? '' : `onclick="abrirModulo('${x.id}')"`}>
+              <div class="mod-num">${i + 1}</div>
+              <div style="flex:1;">
+                <strong>${esc(x.titulo)}</strong>
+                <div style="font-size:13px; color:var(--mut); margin:4px 0 8px;">Plazo: día ${x.plazo} · ${x.horas} h · ${esc(x.responsable)}</div>
+                ${pill} ${vencido ? '<span class="st bad">Atrasado</span>' : ''}
+              </div>
+            </div>`;
+        }).join('')}
+      </div>`;
+    return;
+  }
+
+  const idx = MODULOS.indexOf(m);
+  const r = u.modulos[m.id];
+
+  if (state.enQuiz && !isStaff()) {
+    container.innerHTML = `
+      <button class="btn btn-outline btn-sm" onclick="cancelarQuiz()">← Volver al contenido</button>
+      <h2 style="margin-top:14px;">Evaluación: ${esc(m.titulo)}</h2>
+      <p>${m.preguntas.length} preguntas · Aprobación mínima: <strong>${META.teoria}%</strong></p>
+      <form id="quizForm" onsubmit="submitQuiz(event, '${m.id}')">
+        ${m.preguntas.map((p, i) => `
+          <div class="crit" style="flex-direction:column; align-items:flex-start;">
+            <strong>${i + 1}. ${esc(p.q)}</strong>
+            ${state.quizOrden[i].map((op, j) => `<label style="margin-top:6px; display:flex; gap:8px; align-items:flex-start;"><input type="radio" name="q${i}" value="${j}" ${j === 0 ? 'required' : ''}> <span>${esc(op)}</span></label>`).join('')}
+          </div>`).join('')}
+        <button type="submit" class="btn btn-grn" style="margin-top:10px;">📩 Enviar evaluación</button>
+      </form>`;
+    return;
+  }
+
+  let evalBloque = '';
+  if (isStaff()) {
+    evalBloque = r
+      ? `<div class="alert ${r.aprobado ? 'g' : 'y'}"><strong>Resultado: ${r.pts} de ${r.total} (${r.pct}%) · ${r.aprobado ? 'Aprobado' : 'No aprobado'}</strong><small>Intentos: ${r.intentos}</small></div>`
+      : '<div class="alert b"><strong>El colaborador aún no rindió este módulo.</strong></div>';
+  } else if (r && r.aprobado) {
+    evalBloque = `<div class="alert g"><strong>✅ Módulo aprobado: ${r.pts} de ${r.total} (${r.pct}%)</strong><small>Intentos: ${r.intentos}</small></div>`;
+  } else if (r && r.reevalDesde > Date.now()) {
+    evalBloque = `<div class="alert y"><strong>📖 Refuerzo asignado: repase el contenido</strong><small>Último resultado: ${r.pct}% (meta ${META.teoria}%). Reevaluación habilitada desde ${fmtFecha(r.reevalDesde)}. El supervisor puede habilitarla antes.</small></div>`;
+  } else {
+    evalBloque = `
+      ${r ? `<div class="alert y"><strong>Último resultado: ${r.pct}% (meta ${META.teoria}%)</strong><small>Reevaluación habilitada. Repase el contenido antes de intentarlo.</small></div>` : ''}
+      <button class="btn btn-grn" onclick="iniciarQuiz('${m.id}')">✍️ Rendir evaluación (${m.preguntas.length} preguntas)</button>`;
+  }
+
+  container.innerHTML = `
+    <button class="btn btn-outline btn-sm" onclick="cerrarModulo()">← Todos los módulos</button>
+    <h2 style="margin-top:14px;">Módulo ${idx + 1}: ${esc(m.titulo)}</h2>
+    <p style="color:var(--mut);">Plazo: día ${m.plazo} · Tiempo previsto: ${m.horas} h · Responsable: ${esc(m.responsable)}<br>Resultado esperado: ${esc(m.resultado)}</p>
+    ${m.contenido.map(s => `
+      <h3>${esc(s.h)}</h3>
+      <ul style="margin:4px 0 0; padding-left:22px;">${s.items.map(it => `<li style="margin-bottom:4px;">${esc(it)}</li>`).join('')}</ul>`).join('')}
+    <h3 style="margin-top:22px;">Evaluación del módulo</h3>
+    ${evalBloque}
+  `;
+}
+
+function abrirModulo(id) { state.moduloSel = id; state.enQuiz = false; renderView(); }
+function cerrarModulo() { state.moduloSel = null; state.enQuiz = false; renderView(); }
+function cancelarQuiz() { state.enQuiz = false; renderView(); }
+
+function iniciarQuiz(id) {
+  const m = MODULOS.find(x => x.id === id);
+  state.quizOrden = m.preguntas.map(p => shuffle([p.ok].concat(p.mal)));
+  state.enQuiz = true;
+  renderView();
+}
+
+function submitQuiz(e, mid) {
+  e.preventDefault();
+  const u = state.currentUser;
+  const m = MODULOS.find(x => x.id === mid);
+  const fd = new FormData(e.target);
+  let ok = 0;
+  m.preguntas.forEach((p, i) => { if (state.quizOrden[i][Number(fd.get('q' + i))] === p.ok) ok++; });
+  const total = m.preguntas.length;
+  const pct = Math.round(ok / total * 100);
+  const aprobado = pct >= META.teoria;
+  const prev = u.modulos[mid];
+
+  u.modulos[mid] = {
+    pts: ok, total, pct, aprobado,
+    intentos: (prev ? prev.intentos : 0) + 1,
+    reevalDesde: aprobado ? 0 : Date.now() + REEVAL_HORAS * 3600 * 1000,
+    fecha: hoy()
+  };
+
+  const clave = `teoria:${u.id}:${mid}`;
+  let extra = '';
+  if (aprobado) {
+    DESVIACIONES.forEach(d => { if (d.clave === clave && d.estado !== 'Resuelta') d.estado = 'Resuelta'; });
+    saveDesv();
+    verificarAtrasos(u);
+  } else {
+    const dif = pct - META.teoria;
+    const hasta = u.modulos[mid].reevalDesde;
+    registrarDesviacion({
+      clave, userId: u.id, modId: mid, area: u.area,
+      tipo: 'Falla Teórica (ISO 45001)',
+      descripcion: `${u.nombre} obtuvo ${pct}% en «${m.titulo}» (meta ${META.teoria}%): ${pct} − ${META.teoria} = ${dif} puntos porcentuales. Acción: módulo de refuerzo asignado y reevaluación habilitada desde ${fmtFecha(hasta)}.`,
+      severidad: pct < 60 ? 'Alta' : 'Media',
+      reportadoPor: 'Sistema (automático)'
+    });
+    extra = `<div class="alert y"><strong>Refuerzo asignado.</strong> Repase el contenido del módulo. Reevaluación habilitada desde <b>${fmtFecha(hasta)}</b> (${REEVAL_HORAS} h). El supervisor fue alertado.</div>`;
+  }
+  saveUsers();
+  state.enQuiz = false;
+
+  showModal(`
+    <h3>Resultado de la evaluación</h3>
+    <p>${esc(m.titulo)}</p>
+    <p>Respuestas correctas: <strong>${ok} de ${total}</strong> · Calificación: <strong>${pct}%</strong> (meta ${META.teoria}%)</p>
+    ${aprobado ? '<div class="alert g"><strong>¡MÓDULO APROBADO!</strong> Ya puede continuar con el siguiente módulo.</div>' : extra}
+    <div style="text-align:right; margin-top:16px;"><button class="btn btn-steel" onclick="closeModal(); setupHeaderAndUI(); renderView();">Aceptar</button></div>
+  `);
+}
+
+// ---------- VIDEO Y NOTAS ----------
+function renderCapacitacion(container, u) {
+  const key = 'metalpro_notes_' + u.id;
+  let nota = '';
+  try { nota = localStorage.getItem(key) || ''; } catch (e) {}
+  container.innerHTML = `
+    <h2>Video de capacitación: PST para ${esc(u.cargo)}</h2>
+    <p>Vea el video sobre Procedimientos Seguros de Trabajo (PST).</p>
+    <div class="cols">
+      <div><div class="video-container"><iframe src="${VIDEO_CARGO}" title="Video SSOMA" allowfullscreen></iframe></div></div>
+      <div>
+        <h3>Notas personales</h3>
+        <p style="font-size:13px; color:var(--mut)">Escriba dudas para consultar con su tutor.</p>
+        <textarea id="notesArea" placeholder="Ej: Consultar por la renovación de cartuchos...">${esc(nota)}</textarea>
+        <button class="btn btn-steel" style="margin-top:10px" onclick="saveNotes(${u.id})">💾 Guardar notas</button>
+      </div>
+    </div>`;
+}
+
+function saveNotes(id) {
+  try { localStorage.setItem('metalpro_notes_' + id, document.getElementById('notesArea').value); } catch (e) {}
+  showToast('Notas guardadas correctamente');
+}
+
+// ---------- MATRIZ IPERC ----------
+function renderIPERC(container) {
+  let filtered = MATRIZ_IPERC;
+  if (state.ipercFilter !== 'ALL') filtered = filtered.filter(i => i.nivel === state.ipercFilter);
+  if (state.ipercSearch.trim() !== '') {
+    const q = state.ipercSearch.toLowerCase();
+    filtered = filtered.filter(i => (i.peligro + i.riesgo + i.control).toLowerCase().includes(q));
+  }
+  container.innerHTML = `
+    <h2>Matriz IPERC</h2>
+    <p>Identificación de peligros, evaluación de riesgos y controles del puesto.</p>
+    <div style="display:flex; flex-wrap:wrap; gap:12px; margin-bottom:16px; align-items:center;">
+      <input type="text" id="ipercQ" placeholder="🔍 Buscar peligro o control..." value="${esc(state.ipercSearch)}" oninput="searchIPERC(this.value)" style="flex:1; min-width:200px;">
+      <select onchange="filterIPERC(this.value)">
+        <option value="ALL" ${state.ipercFilter === 'ALL' ? 'selected' : ''}>Todos los niveles</option>
+        <option value="Alto" ${state.ipercFilter === 'Alto' ? 'selected' : ''}>Nivel Alto</option>
+        <option value="Medio" ${state.ipercFilter === 'Medio' ? 'selected' : ''}>Nivel Medio</option>
+        <option value="Bajo" ${state.ipercFilter === 'Bajo' ? 'selected' : ''}>Nivel Bajo</option>
+      </select>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>Peligro</th><th>Riesgo asociado</th><th>Nivel</th><th>Medidas de control</th></tr></thead>
+      <tbody>${filtered.length ? filtered.map(i => `
+        <tr><td><strong>${esc(i.peligro)}</strong></td><td>${esc(i.riesgo)}</td>
+        <td><span class="st ${i.nivel === 'Alto' ? 'bad' : i.nivel === 'Medio' ? 'wait' : 'ok'}">${i.nivel}</span></td><td>${esc(i.control)}</td></tr>`).join('') : '<tr><td colspan="4" style="text-align:center;">No se encontraron resultados</td></tr>'}
+      </tbody></table></div>`;
+  const q = document.getElementById('ipercQ');
+  if (q && state.ipercSearch) { q.focus(); q.setSelectionRange(q.value.length, q.value.length); }
+}
+function searchIPERC(q) { state.ipercSearch = q; renderIPERC(document.getElementById('v')); }
+function filterIPERC(v) { state.ipercFilter = v; renderIPERC(document.getElementById('v')); }
+
+// ---------- FICHA / FIRMA ----------
+function renderFirma(container, u) {
+  const m = metricas(u);
+  const habil = m.estado === 'Habilitado';
+  const sup = USERS.find(x => x.role === 'supervisor');
+  const firmaCol = habil ? esc(u.nombre) : '<span style="color:#999; font-family:sans-serif; font-size:12px;">Pendiente de habilitación</span>';
+  const firmaSup = habil && sup ? esc(sup.nombre) : '<span style="color:#999; font-family:sans-serif; font-size:12px;">Pendiente</span>';
+  container.innerHTML = `
+    <h2>Ficha Oficial de Inducción SSOMA</h2>
+    <p>Documento para archivo y fiscalización. La firma se completa cuando la inducción queda habilitada.</p>
+    <div style="border:1px solid var(--line); padding:24px; border-radius:6px; background:#fff; color:#000;">
+      <div style="display:flex; justify-content:space-between; border-bottom:3px solid #1F2A33; padding-bottom:12px; margin-bottom:16px; flex-wrap:wrap; gap:8px;">
+        <div><h3 style="margin:0; font-size:24px; color:#1F2A33;">METALPRO S.A.</h3>
+        <small style="color:#555; font-weight:600;">GERENCIA DE SEGURIDAD INDUSTRIAL & MEDIO AMBIENTE</small></div>
+        <div style="text-align:right;"><small>Código: <strong>IND-SSOMA-2026</strong></small><br><small>Fecha: ${new Date().toLocaleDateString('es-PY')}</small></div>
+      </div>
+      <table style="width:100%; font-size:13px; margin-bottom:16px; border:0; min-width:0;">
+        <tr><td style="border:0; padding:4px;"><strong>Colaborador:</strong> ${esc(u.nombre)}</td><td style="border:0; padding:4px;"><strong>Código/DNI:</strong> ${esc(u.code)}</td></tr>
+        <tr><td style="border:0; padding:4px;"><strong>Cargo:</strong> ${esc(u.cargo)}</td><td style="border:0; padding:4px;"><strong>Área:</strong> ${esc(u.area)}</td></tr>
+        <tr><td style="border:0; padding:4px;"><strong>Módulos aprobados:</strong> ${m.aprobados} de ${MODULOS.length}</td><td style="border:0; padding:4px;"><strong>Eficacia del aprendizaje:</strong> ${m.eficacia == null ? '—' : m.eficacia + '%'}</td></tr>
+        <tr><td style="border:0; padding:4px;"><strong>Competencias críticas:</strong> ${m.prAprob} de ${PRACTICAS.length}</td><td style="border:0; padding:4px;"><strong>EPP:</strong> ${u.eppEntregado ? 'CONFORME' : 'PENDIENTE'}</td></tr>
+        <tr><td style="border:0; padding:4px;" colspan="2"><strong>Estado general:</strong> ${m.estado.toUpperCase()}</td></tr>
+      </table>
+      <p style="font-size:12px; color:#333; line-height:1.5;">Declaro haber recibido la Inducción de Seguridad, Salud Ocupacional y Medio Ambiente (SSOMA) de MetalPro S.A., conocer la Matriz IPERC de mi puesto, los procedimientos de PTS y LOTO y la política de uso de EPP, y me comprometo a cumplirlos.</p>
+      <div style="margin-top:30px; display:flex; justify-content:space-around; text-align:center; flex-wrap:wrap; gap:20px;">
+        <div><div style="border-bottom:1px solid #000; width:220px; height:45px; display:flex; align-items:flex-end; justify-content:center; font-family:cursive; font-size:16px;">${firmaCol}</div><small style="display:block; margin-top:4px;">Firma del Colaborador</small></div>
+        <div><div style="border-bottom:1px solid #000; width:220px; height:45px; display:flex; align-items:flex-end; justify-content:center; font-family:cursive; font-size:16px;">${firmaSup}</div><small style="display:block; margin-top:4px;">Supervisor (Gerente de Planta)</small></div>
+      </div>
+    </div>
+    <button class="btn btn-steel" style="margin-top:16px;" onclick="window.print()">🖨️ Imprimir ficha</button>`;
+}
+
+// ==========================================
+// VISTAS DE GESTIÓN (SUPERVISOR / ADMINISTRADOR)
+// ==========================================
+function renderPlan(container, u) {
+  container.innerHTML = `
+    <h2>Plan de Inducción: planificado vs realizado</h2>
+    <p>Plan de ${MODULOS.length} módulos dentro de ${META.dias} días hábiles. ${u ? `Columna "Realizado": <strong>${esc(u.nombre)}</strong>.` : 'Aún no hay colaboradores para comparar.'}</p>
+    <div class="tw"><table>
+      <thead><tr><th>Módulo</th><th>Responsable</th><th>Plazo</th><th>Tiempo previsto</th><th>Resultado esperado</th><th>Evidencia / estándar</th><th>Realizado</th></tr></thead>
+      <tbody>${MODULOS.map((m, i) => {
+        const r = u ? u.modulos[m.id] : null;
+        let real = '<span class="st info">—</span>';
+        if (r && r.aprobado) real = `<span class="st ok">${r.fecha}</span>`;
+        else if (u && u.diaActual > m.plazo) real = '<span class="st bad">Atrasado</span>';
+        else if (u) real = '<span class="st wait">Pendiente</span>';
+        return `<tr><td><strong>${i + 1}. ${esc(m.titulo)}</strong></td><td>${esc(m.responsable)}</td><td>Día ${m.plazo}</td><td>${m.horas} h</td><td>${esc(m.resultado)}</td><td>Evaluación ≥ ${META.teoria}%</td><td>${real}</td></tr>`;
+      }).join('')}
+      <tr><td><strong>Prácticas en terreno</strong></td><td>Supervisor (Gerente de Planta)</td><td>Día ${META.dias}</td><td>—</td><td>${PRACTICAS.length} competencias críticas validadas</td><td>Validación práctica (100%)</td><td>${u ? `<span class="st ${metricas(u).competencias >= 100 ? 'ok' : 'wait'}">${metricas(u).prAprob}/${PRACTICAS.length}</span>` : '—'}</td></tr>
+      </tbody></table></div>`;
+}
+
+function updateUserDay(id, v) {
+  const u = USERS.find(x => x.id === id);
+  if (!u) return;
+  u.diaActual = Math.max(1, Math.min(30, Math.round(Number(v)) || 1));
+  saveUsers();
+  verificarAtrasos(u);
+  showToast(`Día actualizado a ${u.diaActual} para ${u.nombre}`);
+  setupHeaderAndUI();
+  renderView();
+}
+
+function inspectUser(id) {
+  state.managedUserId = id;
+  setupHeaderAndUI();
+  switchTab('resumen');
+  showToast('Modo inspección activado');
+}
+
+function renderColaboradores(container) {
+  const cols = colaboradores();
+  const sup = state.currentUser.role === 'supervisor';
+  const adm = state.currentUser.role === 'admin';
+
+  const seguimiento = cols.length ? `
+    <div class="tw"><table>
+      <thead><tr><th>Colaborador</th><th>Cargo / Área</th><th>Día</th><th>EPP</th><th>Avance</th><th>Estado</th><th></th></tr></thead>
+      <tbody>${cols.map(c => { const m = metricas(c); return `
+        <tr>
+          <td><strong>${esc(c.nombre)}</strong><br><small style="color:var(--mut)">${esc(c.code)}</small></td>
+          <td>${esc(c.cargo)}<br><small style="color:var(--mut)">${esc(c.area)}</small></td>
+          <td><input type="number" min="1" max="30" value="${c.diaActual}" onchange="updateUserDay(${c.id}, this.value)" style="width:65px;"></td>
+          <td><span class="st ${c.eppEntregado ? 'ok' : 'bad'}" style="cursor:pointer" onclick="toggleEPPStatus(${c.id})">${c.eppEntregado ? 'Entregado' : 'Pendiente'}</span></td>
+          <td>${m.avance}% <small style="color:var(--mut)">(${m.aprobados}/${MODULOS.length})</small></td>
+          <td><span class="st ${estadoCls(m.estado)}">${m.estado}</span></td>
+          <td><button class="btn btn-steel btn-sm" onclick="inspectUser(${c.id})">👁️ Ver</button></td>
+        </tr>`; }).join('')}</tbody></table></div>
+    <p style="font-size:13px; color:var(--mut); margin-top:8px;">El campo "Día" simula el paso del tiempo hábil de la inducción (útil para la demostración).</p>`
+    : '<div class="alert b"><strong>Aún no hay Nuevos Colaboradores registrados.</strong><small>Cada persona crea su propio usuario desde "Regístrese aquí".</small></div>';
+
+  const celdaPractica = (c, p) => {
+    const est = (c.practicas || {})[p.id];
+    const cls = est === 'aprobada' ? 'ok' : (est === 'reprobada' ? 'bad' : 'info');
+    const txt = est === 'aprobada' ? 'Aprobada' : (est === 'reprobada' ? 'Reprobada' : 'Pendiente');
+    const btns = sup ? `<div style="margin-top:6px; display:flex; gap:4px;"><button class="btn btn-grn btn-sm" onclick="validarPractica(${c.id},'${p.id}','aprobada')">✓</button><button class="btn btn-red btn-sm" onclick="validarPractica(${c.id},'${p.id}','reprobada')">✗</button></div>` : '';
+    return `<td><span class="st ${cls}">${txt}</span>${btns}</td>`;
+  };
+
+  const practicas = cols.length ? `
+    <div class="tw"><table>
+      <thead><tr><th>Colaborador</th>${PRACTICAS.map(p => `<th>${esc(p.nombre)}</th>`).join('')}</tr></thead>
+      <tbody>${cols.map(c => `<tr><td><strong>${esc(c.nombre)}</strong></td>${PRACTICAS.map(p => celdaPractica(c, p)).join('')}</tr>`).join('')}</tbody></table></div>
+    <p style="font-size:13px; color:var(--mut); margin-top:8px;">${sup ? 'Como Supervisor usted aprueba (✓) o reprueba (✗) las prácticas en terreno. Una práctica reprobada genera una desviación y alerta por correo.' : 'Solo el Supervisor (Gerente de Planta) valida las prácticas en terreno.'}</p>`
+    : '<p style="color:var(--mut)">Sin colaboradores para validar.</p>';
+
+  const grupos = Object.keys(PERFILES).map(role => {
+    const p = PERFILES[role];
+    const subs = p.cargos.map(cargo => {
+      const lista = USERS.filter(u => u.role === role && u.cargo === cargo);
+      return `
+        <h4 style="margin:12px 0 6px; font-size:17px;">${esc(cargo)} <span class="st info">${lista.length}</span></h4>
+        ${lista.length ? `<div class="tw"><table style="min-width:520px;"><thead><tr><th>Nombre</th><th>Código</th><th>Correo</th><th>Área</th><th>Ingreso</th>${adm ? '<th></th>' : ''}</tr></thead>
+          <tbody>${lista.map(x => `<tr><td><strong>${esc(x.nombre)}</strong></td><td>${esc(x.code)}</td><td>${esc(x.email)}</td><td>${esc(x.area)}</td><td>${esc(x.fechaIngreso)}</td>
+            ${adm ? `<td>${x.id === state.currentUser.id ? '' : `<button class="btn btn-red btn-sm" onclick="confirmarEliminar(${x.id})">Eliminar</button>`}</td>` : ''}</tr>`).join('')}</tbody></table></div>` : '<small style="color:var(--mut)">Sin usuarios en este cargo.</small>'}`;
+    }).join('');
+    return `<h3 style="margin-top:20px;">${esc(p.nombre)} <span class="st info">${USERS.filter(u => u.role === role).length}</span></h3>${subs}`;
+  }).join('');
+
+  container.innerHTML = `
+    <h2>Seguimiento de colaboradores</h2>
+    ${seguimiento}
+    <h2 style="margin-top:28px;">Validación de prácticas en terreno</h2>
+    ${practicas}
+    <h2 style="margin-top:28px;">Usuarios del sistema (por perfil y cargo)</h2>
+    ${grupos}`;
+}
+
+function confirmarEliminar(id) {
+  const u = USERS.find(x => x.id === id);
+  if (!u) return;
+  showModal(`
+    <h3>¿Eliminar usuario?</h3>
+    <p>Se eliminará a <strong>${esc(u.nombre)}</strong> (${esc(u.cargo)}). Esta acción no se puede deshacer.</p>
+    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn btn-outline" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-red" onclick="eliminarUsuario(${id})">Sí, eliminar</button>
+    </div>`);
+}
+
+function eliminarUsuario(id) {
+  if (!state.currentUser || state.currentUser.role !== 'admin') return;
+  const i = USERS.findIndex(x => x.id === id);
+  if (i < 0 || id === state.currentUser.id) return;
+  USERS.splice(i, 1);
+  saveUsers();
+  if (state.managedUserId === id) { const p = colaboradores()[0]; state.managedUserId = p ? p.id : null; }
+  closeModal();
+  showToast('Usuario eliminado');
+  setupHeaderAndUI();
+  renderView();
+}
+
+function validarPractica(uid, pid, estado) {
+  if (!state.currentUser || state.currentUser.role !== 'supervisor') return;
+  const u = USERS.find(x => x.id === uid);
+  const p = PRACTICAS.find(x => x.id === pid);
+  if (!u || !p) return;
+  u.practicas = u.practicas || {};
+  u.practicas[pid] = estado;
+  saveUsers();
+  const clave = `practica:${uid}:${pid}`;
+  if (estado === 'reprobada') {
+    registrarDesviacion({
+      clave, userId: uid, area: u.area,
+      tipo: `Falla en Práctica (${p.nombre})`,
+      descripcion: `${u.nombre} no aprobó la práctica «${p.nombre}» (meta ${META.competencias}%).` + (pid === 'pts' ? ' Acción: bloqueo de firma de permisos de trabajo, tutoría presencial con el Gerente de Planta y simulación en terreno.' : ' Acción: tutoría presencial y nueva práctica en terreno.'),
+      severidad: 'Alta',
+      reportadoPor: state.currentUser.nombre
+    });
+  } else {
+    DESVIACIONES.forEach(d => { if (d.clave === clave && d.estado !== 'Resuelta') d.estado = 'Resuelta'; });
+    saveDesv();
+  }
+  showToast(`Práctica ${estado}: ${p.nombre}`);
+  renderView();
+}
+
+// ---------- TABLERO ----------
+function renderTablero(container) {
+  const adm = state.currentUser.role === 'admin';
+  const cols = colaboradores();
+  const ms = cols.map(c => ({ c, m: metricas(c) }));
+  const prom = f => { const v = ms.map(x => f(x.m)).filter(x => x != null); return v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length) : null; };
+
+  const kpis = [
+    { n: 'Avance global de inducción', obj: 'Conocer cuánto del plan se completó', f: 'Módulos completados / módulos programados × 100', fu: 'Evaluaciones aprobadas', fr: 'Diaria', r: 'Supervisor', meta: `${META.avance}%`, val: prom(m => m.avance), ok: v => v >= META.avance, u: '%' },
+    { n: 'Adherencia al cronograma', obj: 'Verificar el cumplimiento de plazos', f: 'Actividades en fecha / actividades programadas × 100', fu: 'Plan de inducción y fechas de aprobación', fr: 'Diaria', r: 'Supervisor / RR.HH.', meta: `≥ ${META.cronograma}%`, val: prom(m => m.adherencia), ok: v => v >= META.cronograma, u: '%' },
+    { n: 'Eficacia del aprendizaje SSOMA', obj: 'Medir cuánto aprendió el colaborador', f: 'Puntos obtenidos / puntos totales × 100', fu: 'Evaluaciones por módulo', fr: 'Por evaluación', r: 'Calidad / Supervisor', meta: `≥ ${META.teoria}%`, val: prom(m => m.eficacia), ok: v => v >= META.teoria, u: '%' },
+    { n: 'Aprobación de competencias críticas', obj: 'Asegurar el desempeño en tareas de alto riesgo', f: 'Tareas de alto riesgo aprobadas / requeridas × 100', fu: 'Validación práctica en terreno', fr: 'Por práctica', r: 'Supervisor', meta: `${META.competencias}%`, val: prom(m => m.competencias), ok: v => v >= META.competencias, u: '%' },
+    { n: 'Tiempo de adaptación', obj: 'Medir la rapidez para lograr autonomía', f: 'Días hábiles transcurridos hasta lograr autonomía', fu: 'Fecha de ingreso y habilitación', fr: 'Semanal', r: 'RR.HH.', meta: `≤ ${META.dias} días`, val: prom(m => m.dias), ok: v => v <= META.dias, u: ' días' }
+  ];
+
+  const abiertas = DESVIACIONES.filter(d => d.estado !== 'Resuelta').length;
+
+  const alertas = [];
+  ms.forEach(({ c, m }) => {
+    m.atrasados.forEach(x => alertas.push(`<div class="alert"><strong>⏰ ${esc(c.nombre)}: atraso en «${esc(x.titulo)}»</strong><small>Plazo día ${x.plazo}; día actual ${c.diaActual}.</small></div>`));
+    if (m.ptsBloqueado) alertas.push(`<div class="alert"><strong>🔒 ${esc(c.nombre)}: firma de PTS bloqueada</strong><small>Requiere tutoría presencial y simulación en terreno.</small></div>`);
+    MODULOS.forEach(x => { const r = c.modulos[x.id]; if (r && !r.aprobado) alertas.push(`<div class="alert y"><strong>📖 ${esc(c.nombre)}: refuerzo en «${esc(x.titulo)}» (${r.pct}%)</strong><small>Reevaluación desde ${fmtFecha(r.reevalDesde)}.</small></div>`); });
+    if (c.diaActual > META.dias && m.estado !== 'Habilitado') alertas.push(`<div class="alert"><strong>⏳ ${esc(c.nombre)} superó los ${META.dias} días hábiles</strong><small>Inducción incompleta.</small></div>`);
+  });
+
+  container.innerHTML = `
+    <h2>Tablero de Control de la Inducción</h2>
+    <p>Indicadores en tiempo real calculados a partir de los colaboradores registrados (${cols.length}).</p>
+
+    <div class="kpis">
+      ${kpis.map(k => kpiBox(k.n, k.val == null ? '—' : k.val + k.u, `Meta ${k.meta}`, k.val == null ? null : k.ok(k.val))).join('')}
+      ${kpiBox('Desviaciones abiertas', abiertas, 'Pendientes de resolver', abiertas === 0)}
+    </div>
+
+    <h3>Panel de alertas</h3>
+    ${alertas.join('') || '<div class="alert g"><strong>Sin alertas activas</strong></div>'}
+
+    <h3>Estado por colaborador</h3>
+    ${cols.length ? `<div class="tw"><table>
+      <thead><tr><th>Colaborador</th><th>Día</th><th>Avance</th><th>Módulos</th><th>Eficacia</th><th>Adherencia</th><th>Competencias</th><th>Estado</th></tr></thead>
+      <tbody>${ms.map(({ c, m }) => `<tr><td><strong>${esc(c.nombre)}</strong></td><td>${c.diaActual}</td><td>${m.avance}%</td><td>${m.aprobados}/${MODULOS.length}</td><td>${m.eficacia == null ? '—' : m.eficacia + '%'}</td><td>${m.adherencia}%</td><td>${m.prAprob}/${PRACTICAS.length}</td><td><span class="st ${estadoCls(m.estado)}">${m.estado}</span></td></tr>`).join('')}</tbody></table></div>` : '<p style="color:var(--mut)">Sin colaboradores registrados.</p>'}
+
+    <h3>Ficha de indicadores de gestión</h3>
+    <div class="tw"><table style="min-width:1000px;">
+      <thead><tr><th>Indicador</th><th>Objetivo</th><th>Fórmula</th><th>Fuente</th><th>Frecuencia</th><th>Responsable</th><th>Meta</th><th>Resultado</th><th>Interpretación</th></tr></thead>
+      <tbody>${kpis.map(k => {
+        const has = k.val != null; const ok = has && k.ok(k.val);
+        return `<tr><td><strong>${k.n}</strong></td><td>${k.obj}</td><td>${k.f}</td><td>${k.fu}</td><td>${k.fr}</td><td>${k.r}</td><td>${k.meta}</td><td><span class="st ${!has ? 'info' : ok ? 'ok' : 'bad'}">${has ? k.val + k.u : '—'}</span></td><td>${!has ? 'Sin datos todavía.' : ok ? 'Meta cumplida.' : 'Desviación: aplicar acción correctiva.'}</td></tr>`;
+      }).join('')}</tbody></table></div>
+
+    ${adm ? `
+    <h3>Configuración de metas (Administrador)</h3>
+    <form onsubmit="guardarMetas(event)" style="display:flex; flex-wrap:wrap; gap:14px; align-items:flex-end;">
+      <label>Eficacia teórica mínima (%)<br><input type="number" id="mTeoria" min="1" max="100" value="${META.teoria}" style="width:120px;"></label>
+      <label>Adherencia mínima (%)<br><input type="number" id="mCron" min="1" max="100" value="${META.cronograma}" style="width:120px;"></label>
+      <label>Días hábiles máximos<br><input type="number" id="mDias" min="1" max="60" value="${META.dias}" style="width:120px;"></label>
+      <button class="btn btn-steel" type="submit">💾 Guardar metas</button>
+    </form>` : ''}
+  `;
+}
+
+function guardarMetas(e) {
+  e.preventDefault();
+  const g = (id, a, b, d) => { const v = Number(document.getElementById(id).value); return Number.isFinite(v) ? Math.max(a, Math.min(b, Math.round(v))) : d; };
+  META.teoria = g('mTeoria', 1, 100, META.teoria);
+  META.cronograma = g('mCron', 1, 100, META.cronograma);
+  META.dias = g('mDias', 1, 60, META.dias);
+  guardar(K.meta, META);
+  showToast('Metas actualizadas');
+  setupHeaderAndUI();
+  renderView();
+}
+
+// ---------- DESVIACIONES ----------
+function renderDesviaciones(container) {
+  const lista = DESVIACIONES.slice().sort((a, b) => b.id - a.id);
+  container.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+      <h2>Desviaciones y hallazgos SSOMA</h2>
+      <button class="btn btn-red btn-sm" onclick="openAddDesviacionModal()">🚨 Reportar desviación</button>
+    </div>
+    <p>Las desviaciones del control de gestión (fallas teóricas, prácticas y atrasos) se registran automáticamente y se avisan por correo a los supervisores.</p>
+    <div class="tw"><table>
+      <thead><tr><th>ID</th><th>Fecha</th><th>Área</th><th>Tipo</th><th>Descripción</th><th>Severidad</th><th>Estado</th><th>Acción</th></tr></thead>
+      <tbody>${lista.length ? lista.map(d => `
+        <tr>
+          <td>#${d.id}</td><td>${esc(d.fecha)}</td><td>${esc(d.area)}</td><td>${esc(d.tipo)}</td><td>${esc(d.descripcion)}</td>
+          <td><span class="st ${d.severidad === 'Alta' ? 'bad' : d.severidad === 'Media' ? 'wait' : 'ok'}">${esc(d.severidad)}</span></td>
+          <td><select onchange="changeDesvState(${d.id}, this.value)" style="font-size:12px;">
+            ${['Abierta', 'En Tratamiento', 'Resuelta'].map(s => `<option value="${s}" ${d.estado === s ? 'selected' : ''}>${s}</option>`).join('')}
+          </select></td>
+          <td>${d.modId && d.estado !== 'Resuelta' ? `<button class="btn btn-steel btn-sm" onclick="habilitarReeval(${d.id})">Habilitar reevaluación</button>` : ''}</td>
+        </tr>`).join('') : '<tr><td colspan="8" style="text-align:center;">Sin desviaciones registradas</td></tr>'}</tbody></table></div>`;
+}
+
+function changeDesvState(id, st) {
+  const d = DESVIACIONES.find(x => x.id === id);
+  if (!d) return;
+  d.estado = st;
+  saveDesv();
+  showToast(`Estado de la desviación #${id}: ${st}`);
+}
+
+function habilitarReeval(id) {
+  const d = DESVIACIONES.find(x => x.id === id);
+  const u = d && USERS.find(x => x.id === d.userId);
+  if (!u || !u.modulos[d.modId]) return;
+  u.modulos[d.modId].reevalDesde = 0;
+  d.estado = 'En Tratamiento';
+  saveUsers(); saveDesv();
+  showToast(`Reevaluación habilitada para ${u.nombre}`);
+  renderView();
+}
+
+function openAddDesviacionModal() {
+  showModal(`
+    <h3>Reportar nueva desviación SSOMA</h3>
+    <form onsubmit="saveDesviacion(event)">
+      <div style="margin-bottom:10px;"><label>Área:</label>
+        <select id="desvArea" style="width:100%"><option>Maestranza</option><option>Estructuras</option><option>Montaje</option><option>Mantenimiento</option><option>Operaciones</option></select></div>
+      <div style="margin-bottom:10px;"><label>Tipo:</label>
+        <select id="desvTipo" style="width:100%"><option>Condición Subestándar</option><option>Acto Subestándar</option></select></div>
+      <div style="margin-bottom:10px;"><label>Severidad:</label>
+        <select id="desvSev" style="width:100%"><option>Alta</option><option>Media</option><option>Baja</option></select></div>
+      <div style="margin-bottom:15px;"><label>Descripción:</label><textarea id="desvDesc" required style="width:100%"></textarea></div>
+      <button type="submit" class="btn btn-red">Registrar hallazgo</button>
+      <button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button>
+    </form>`);
+}
+
+function saveDesviacion(e) {
+  e.preventDefault();
+  const d = {
+    id: nextDesvId(), fecha: hoy(),
+    area: document.getElementById('desvArea').value,
+    tipo: document.getElementById('desvTipo').value,
+    severidad: document.getElementById('desvSev').value,
+    descripcion: document.getElementById('desvDesc').value.replace(/[<>]/g, ''),
+    estado: 'Abierta', reportadoPor: state.currentUser.nombre
+  };
+  DESVIACIONES.push(d);
+  saveDesv();
+  closeModal();
+  showToast('Desviación registrada correctamente');
+  notificarDesviacion(d, true);
+  renderView();
+}
+
+// ---------- PUNTOS CRÍTICOS ----------
+function renderPuntosCriticos(container) {
+  container.innerHTML = `
+    <h2>Puntos críticos y Permisos de Trabajo Seguro (PTS)</h2>
+    <p>Actividades del cargo cuya ejecución incorrecta puede causar consecuencias graves. Reciben el mayor nivel de control.</p>
+    <div class="cols">
+      <div>
+        <h3>Puntos críticos del cargo</h3>
+        ${PUNTOS_CRITICOS.map(p => `<div class="crit"><span class="st bad">CRÍTICO</span><span>${esc(p)}</span></div>`).join('')}
+        <p style="font-size:13px; color:var(--mut);">Control aplicado: práctica validada por el Supervisor (100%). Si falla la práctica de PTS, se bloquea la firma de permisos.</p>
+      </div>
+      <div>
+        <div class="crit" style="flex-direction:column; align-items:flex-start;">
+          <span class="st bad">TRABAJOS EN ALTURA (&gt; 1,80 m)</span>
+          <ul style="padding-left:20px; font-size:13px; margin-top:8px;"><li>Arnés con doble cabo.</li><li>Punto de anclaje certificado.</li></ul>
+        </div>
+        <div class="crit" style="flex-direction:column; align-items:flex-start;">
+          <span class="st wait">TRABAJOS EN CALIENTE</span>
+          <ul style="padding-left:20px; font-size:13px; margin-top:8px;"><li>Extintor presente.</li><li>Biombo protector y vigía de fuego.</li></ul>
+        </div>
+        <div class="crit" style="flex-direction:column; align-items:flex-start;">
+          <span class="st info">BLOQUEO Y ETIQUETADO (LOTO)</span>
+          <ul style="padding-left:20px; font-size:13px; margin-top:8px;"><li>Candado personal y etiqueta.</li><li>Verificación de energía cero.</li></ul>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ==========================================
+// DESVIACIONES AUTOMÁTICAS Y AVISO POR CORREO
+// ==========================================
+function registrarDesviacion(d) {
+  if (d.clave && DESVIACIONES.some(x => x.clave === d.clave && x.estado !== 'Resuelta')) return null;
+  const nueva = Object.assign({ id: nextDesvId(), fecha: hoy(), estado: 'Abierta' }, d);
+  DESVIACIONES.push(nueva);
+  saveDesv();
+  notificarDesviacion(nueva, false);
+  return nueva;
+}
+
+// Atraso en cronograma (< meta): alerta a RR.HH. y al supervisor
+function verificarAtrasos(u) {
+  if (!u || u.role !== 'colaborador') return;
+  const m = metricas(u);
+  const clave = `atraso:${u.id}`;
+  if (m.adherencia < META.cronograma) {
+    registrarDesviacion({
+      clave, userId: u.id, area: u.area, tipo: 'Atraso en Cronograma',
+      descripcion: `${u.nombre}: adherencia ${m.adherencia}% (meta ${META.cronograma}%). Fuera de plazo: ${m.atrasados.map(x => x.titulo).join(', ')}. Acción: reajustar la carga laboral y liberar horas de inducción.`,
+      severidad: 'Media', reportadoPor: 'Sistema (automático)'
+    });
+  } else {
+    DESVIACIONES.forEach(d => { if (d.clave === clave && d.estado !== 'Resuelta') d.estado = 'Resuelta'; });
+    saveDesv();
+  }
+}
+
+async function notificarDesviacion(d, manual) {
+  let dest = USERS.filter(u => u.role === 'supervisor' && u.email);
+  if (String(d.tipo).startsWith('Atraso')) {
+    dest = dest.concat(USERS.filter(u => u.role === 'admin' && u.email && /RR\.HH\./.test(u.cargo)));
+  }
+  if (!dest.length) {
+    showToast('⚠️ Desviación registrada, pero no hay un supervisor con correo registrado');
+    return;
+  }
+
+  const cfg = EMAIL_CONFIG;
+  const configurado = cfg.publicKey && cfg.serviceId && cfg.templateId && window.emailjs;
+
+  if (configurado) {
+    let enviados = 0;
+    for (const g of dest) {
+      try {
+        await emailjs.send(cfg.serviceId, cfg.templateId, {
+          to_email: g.email, to_name: g.nombre, id: d.id, fecha: d.fecha, area: d.area, tipo: d.tipo,
+          severidad: d.severidad, descripcion: d.descripcion, reportado_por: d.reportadoPor
+        }, { publicKey: cfg.publicKey });
+        enviados++;
+      } catch (err) { console.error('Error al enviar correo:', err); }
+    }
+    showToast(enviados ? `📧 Alerta enviada a ${enviados} destinatario(s)` : '⚠️ No se pudo enviar el correo (revise la configuración)');
+    return;
+  }
+
+  if (!manual) {
+    showToast('📧 Correo no configurado: la desviación quedó registrada en el sistema');
+    return;
+  }
+  const asunto = `[SSOMA] Desviación #${d.id} - ${d.severidad} - ${d.area}`;
+  const cuerpo = `Se registró una desviación en MetalPro S.A.\n\nFecha: ${d.fecha}\nÁrea: ${d.area}\nTipo: ${d.tipo}\nSeveridad: ${d.severidad}\nDescripción: ${d.descripcion}\nReportado por: ${d.reportadoPor}`;
+  const link = `mailto:${dest.map(g => g.email).join(',')}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
+  showModal(`
+    <h3>Desviación registrada</h3>
+    <p>El envío automático de correos aún no está configurado. Puede avisar ahora desde su programa de correo:</p>
+    <p><strong>Para:</strong> ${esc(dest.map(g => g.email).join(', '))}</p>
+    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn btn-outline" onclick="closeModal()">Cerrar</button>
+      <a class="btn btn-steel" href="${link}" onclick="closeModal()" style="text-decoration:none;">📧 Abrir correo</a>
+    </div>`);
+}
+
+// ==========================================
+// MODALES, TOASTS Y TEMA
+// ==========================================
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3500);
+}
+function showModal(html) {
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme');
+  document.documentElement.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+}
+
+initCargoSelect();
+
+</script>
+</body>
+</html>
